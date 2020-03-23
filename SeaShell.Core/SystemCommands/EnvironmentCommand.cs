@@ -27,18 +27,36 @@ namespace SeaShell.Core.SystemCommands
 
         public IEnumerable<dynamic> Invoke(IEnumerable<Parameter> parameters, IEnumerable<dynamic> pipeline)
         {
-            if (Parameters.Check(parameters).MustBePresent("All").Execute())
+            // All parameter and other parameters present
+            if (Parameters.SeeIf(parameters).HasParam("All").HasParam("Version").Eval()
+                || Parameters.SeeIf(parameters).HasParam("All").HasParam("OS").Eval())
+            {
+                SeaShellErrors.NotifyMutuallyExclusive("All", "Version", "OS");
+                return null;
+            }
+
+            // No parameters present
+            if (Parameters.SeeIf(parameters).HasNone("All").HasNone("Version")
+                .HasNone("OS").Eval())
+            {
+                SeaShellErrors.NotifyMissingOneOfParams("All", "Version", "OS");
+                return null;
+            }
+
+            // All parameter present
+            if (Parameters.SeeIf(parameters).HasParam("All").Eval())
             {
                 PrintVersion();
                 PrintOS();
             }
-            else
-            {
-                if (Parameters.Check(parameters).MustBePresent("Version").Execute())
-                    PrintVersion();
-                if (Parameters.Check(parameters).MustBePresent("OS").Execute())
-                    PrintOS();
-            }
+
+            // Version parameter present
+            if (Parameters.SeeIf(parameters).HasParam("Version").Eval())
+                PrintVersion();
+
+            // Version parameter present
+            if (Parameters.SeeIf(parameters).HasParam("OS").Eval())
+                PrintOS();
 
             void PrintVersion()
             {

@@ -17,6 +17,7 @@ namespace SeaShell.Core
             AllCommands.Add("Environment", new EnvironmentCommand());
             AllCommands.Add("Exit", new ExitCommand());
             AllCommands.Add("Help", new HelpCommand());
+            AllCommands.Add("List-Commands", new ListCommandsCommand());
         }
 
         internal static void PopulateGlobalCommands()

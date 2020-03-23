@@ -15,25 +15,37 @@ namespace SeaShell.Core.Extensibility.Parameters
             this.source = source;
         }
 
-        public ParameterCheckBuilder MustBePresent(string name)
+        public ParameterCheckBuilder HasParam(string name)
         {
             checks.Add(new MustBePresent(name));
             return this;
         }
 
-        public ParameterCheckBuilder MustHaveValue(string name)
+        public ParameterCheckBuilder HasNone(string name)
+        {
+            checks.Add(new CantBePresent(name));
+            return this;
+        }
+
+        public ParameterCheckBuilder HasValue(string name)
         {
             checks.Add(new MustHaveValue(name));
             return this;
         }
 
-        public ParameterCheckBuilder OnlyOneCanBePresent(params string[] values)
+        public ParameterCheckBuilder IsEmpty(string name)
+        {
+            checks.Add(new CantHaveValue(name));
+            return this;
+        }
+
+        public ParameterCheckBuilder HasOnlyOne(params string[] values)
         {
             checks.Add(new OnlyOneCanBePresent(values));
             return this;
         }
 
-        public bool Execute()
+        public bool Eval()
         {
             foreach (var check in checks)
             {

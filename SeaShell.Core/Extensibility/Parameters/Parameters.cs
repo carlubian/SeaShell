@@ -7,6 +7,6 @@ namespace SeaShell.Core.Extensibility.Parameters
 {
     public static class Parameters
     {
-        public static ParameterCheckBuilder Check(IEnumerable<Parameter> source) => new ParameterCheckBuilder(source);
+        public static ParameterCheckBuilder SeeIf(IEnumerable<Parameter> source) => new ParameterCheckBuilder(source);
     }
 }

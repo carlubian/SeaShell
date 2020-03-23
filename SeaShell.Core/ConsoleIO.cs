@@ -20,7 +20,7 @@ namespace SeaShell.Core
 
         internal static void ShowPrompt()
         {
-            Console.Write($"{Environment.CurrentDirectory}>".Pastel("#F0F5FF"));
+            Console.Write($"SSS {Environment.CurrentDirectory}>".Pastel("#F0F5FF"));
             Console.Write(" ".Pastel("#DCE1EB"));
         }
 

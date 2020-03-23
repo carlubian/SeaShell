@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DotNet.Misc.Extensions.Linq;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -31,6 +32,26 @@ namespace SeaShell.Core.Extensibility
 
             if (char.IsLower(cmdName[0]))
                 ConsoleIO.WriteWarning("  Also remember that most official commands start with an uppercase letter.");
+        }
+
+        public static void NotifyParamMissingValue(string param)
+        {
+            ConsoleIO.WriteError($"The parameter {param} requires a value.");
+        }
+
+        public static void NotifyMissingParam(string param)
+        {
+            ConsoleIO.WriteError($"The parameter {param} must be present.");
+        }
+
+        public static void NotifyMissingOneOfParams(params string[] oneOf)
+        {
+            ConsoleIO.WriteError($"One of the following parameters must be present: {oneOf.Stringify(p => p, ", ")}.");
+        }
+
+        public static void NotifyMutuallyExclusive(params string[] onlyOne)
+        {
+            ConsoleIO.WriteError($"Only one of the following parameters can appear: {onlyOne.Stringify(p => p, ", ")}.");
         }
     }
 }
