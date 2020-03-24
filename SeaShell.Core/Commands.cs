@@ -1,5 +1,6 @@
 ﻿using ConfigAdapter.Xml;
 using SeaShell.Core.Extensibility;
+using SeaShell.Core.Libraries;
 using SeaShell.Core.SystemCommands;
 using System;
 using System.Collections.Generic;
@@ -22,9 +23,8 @@ namespace SeaShell.Core
 
         internal static void PopulateGlobalCommands()
         {
-            var directory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".SeaShell");
-            //XmlConfig.From(Path.Combine(directory, "Configuration.xml"));
-
+            // Temp
+            //LibraryManager.InstallGlobalLibrary(@"C:\Users\carlu\Downloads\SeaShell.IO.ssl");
         }
 
         internal static void PopulateLocalCommands()

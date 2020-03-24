@@ -53,5 +53,10 @@ namespace SeaShell.Core.Extensibility
         {
             ConsoleIO.WriteError($"Only one of the following parameters can appear: {onlyOne.Stringify(p => p, ", ")}.");
         }
+
+        public static void NotifyInvalidPath(string path)
+        {
+            ConsoleIO.WriteError($"The path {path} is invalid, nonexistant or unreachable.");
+        }
     }
 }

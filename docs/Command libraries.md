@@ -7,14 +7,14 @@ inside SeaShell, similarly to NuGet packages.
 
 ```
 LibraryFile.ssl
-  Manifest.seashell
+  Manifest.ini
   Assemblies
     ContosoCommands.dll
     Newtonsoft.Json.dll
 ```
 
 * Library file: Root container. The SSL extension comes from SeaShell Library. It's actually a ZIP file but with the extension changed.
-* Manifest.seashell: Information about the library. See details below.
+* Manifest.ini: Information about the library. See details below.
 * Assemblies folder: Contains both the assembly(ies) with actual command implementations as well as any dependencies.
 
 ## Manifest file
