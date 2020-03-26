@@ -1,4 +1,5 @@
-﻿using Ionic.Zip;
+﻿using DotNet.Misc.Extensions.Linq;
+using Ionic.Zip;
 using SeaShell.Core.Extensibility;
 using System;
 using System.Collections.Generic;
@@ -45,6 +46,22 @@ namespace SeaShell.Core.Libraries
             // Load assemblies
             foreach (var asm in manifest.Assemblies)
                 LoadAssembly(Path.Combine(AsmDir, asm));
+        }
+
+        internal static void Unpack(string path)
+        {
+            var dir = new FileInfo(path).Directory.FullName;
+            // Hack to remove file extension.
+            var dest = Path.Combine(dir, new FileInfo(path).Name
+                .Split('.').Reverse().Skip(1).Reverse().Stringify(n => n, "."));
+
+            if (Directory.Exists(dest))
+                CleanDirectory(dest);
+
+            using (var Zip = new ZipFile(path))
+            {
+                Zip.ExtractAll(dest, ExtractExistingFileAction.OverwriteSilently);
+            }
         }
 
         private static void CleanDirectory(string path)
