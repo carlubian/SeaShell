@@ -1,4 +1,5 @@
-﻿using DotNet.Misc.Extensions.Linq;
+﻿using ConfigAdapter.Ini;
+using DotNet.Misc.Extensions.Linq;
 using Ionic.Zip;
 using SeaShell.Core.Extensibility;
 using System;
@@ -61,6 +62,20 @@ namespace SeaShell.Core.Libraries
             using (var Zip = new ZipFile(path))
             {
                 Zip.ExtractAll(dest, ExtractExistingFileAction.OverwriteSilently);
+            }
+        }
+
+        internal static void Pack(string path)
+        {
+            var manifest = Directory.EnumerateFiles(path).FirstOrDefault(f => f.EndsWith("Manifest.ini"));
+            var config = IniConfig.From(manifest);
+            var libName = config.Read("Library:Name");
+
+            using (var Zip = new ZipFile(Path.Combine(path, $"{libName}.ssl")))
+            {
+                Zip.AddFile(Path.Combine(path, "Manifest.ini"), "");
+                Zip.AddDirectory(Path.Combine(path, "Assemblies"), "Assemblies");
+                Zip.Save();
             }
         }
 

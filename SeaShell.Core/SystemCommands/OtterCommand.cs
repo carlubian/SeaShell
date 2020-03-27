@@ -39,7 +39,13 @@ namespace SeaShell.Core.SystemCommands
                 return null;
             }
 
-            // Pack: Check that directory has proper structure, maybe ignore unneeded files?
+            // Pack
+            if (Parameters.SeeIf(parameters).HasParam("Pack").HasValue("Pack").Eval())
+            {
+                // TODO check for errors (missing directory, incorrect format)
+                var library = parameters.Single(p => p.Key == "Pack").Value;
+                LibraryManager.Pack(library);
+            }
 
             // Unpack
             if (Parameters.SeeIf(parameters).HasParam("Unpack").HasValue("Unpack").Eval())
@@ -50,6 +56,12 @@ namespace SeaShell.Core.SystemCommands
             }
 
             // Install
+            if (Parameters.SeeIf(parameters).HasParam("Install").HasValue("Install").Eval())
+            {
+                // TODO check for errors (missing file, incorrect format)
+                var library = parameters.Single(p => p.Key == "Install").Value;
+                LibraryManager.InstallGlobalLibrary(library);
+            }
 
             // List
             if (Parameters.SeeIf(parameters).HasParam("List").Eval())
