@@ -93,7 +93,7 @@ namespace SeaShell.Core.Libraries
             }
         }
 
-        private static void LoadAssembly(string asm)
+        internal static void LoadAssembly(string asm)
         {
             var lib = Assembly.LoadFrom(asm);
 

@@ -19,13 +19,26 @@ namespace SeaShell.Core
             AllCommands.Add("Exit", new ExitCommand());
             AllCommands.Add("Help", new HelpCommand());
             AllCommands.Add("List-Commands", new ListCommandsCommand());
+            AllCommands.Add("Print", new PrintCommand());
             AllCommands.Add("Otter", new OtterCommand());
         }
 
         internal static void PopulateGlobalCommands()
         {
-            // Temp
-            //LibraryManager.InstallGlobalLibrary(@"C:\Users\carlu\Downloads\SeaShell.IO.ssl");
+            var LibDir = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".SeaShell"), "Libraries");
+
+            foreach (var library in Directory.EnumerateDirectories(LibDir))
+            {
+                var manifest = Manifest.Parse(Path.Combine(library, "manifest.ini"));
+                if (manifest is null)
+                    continue;
+
+                var AsmDir = Path.Combine(library, "Assemblies");
+
+                // Load assemblies
+                foreach (var asm in manifest.Assemblies)
+                    LibraryManager.LoadAssembly(Path.Combine(AsmDir, asm));
+            }
         }
 
         internal static void PopulateLocalCommands()

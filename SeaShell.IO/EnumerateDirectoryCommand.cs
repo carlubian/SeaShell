@@ -1,6 +1,7 @@
 ﻿using Pastel;
 using SeaShell.Core;
 using SeaShell.Core.Extensibility;
+using SeaShell.Core.Extensibility.DuckTyping;
 using SeaShell.Core.Extensibility.Parameters;
 using SeaShell.Core.Model;
 using System;
@@ -55,11 +56,19 @@ namespace SeaShell.IO
                 return null;
             }
 
+            var pipeRet = new List<EnumerateDirectoryPipelineObject>();
+
             ConsoleIO.WriteInfo($"Enumerating directory {dirName.Pastel("#F0F5FF")}:");
             ConsoleIO.WriteInfo("  Length    Name");
 
             foreach (var dir in Directory.EnumerateDirectories(dirName))
+            {
                 Console.WriteLine($"            {new DirectoryInfo(dir).Name}");
+                pipeRet.Add(new EnumerateDirectoryPipelineObject()
+                {
+                    StringValue = new DirectoryInfo(dir).Name
+                });
+            }
             foreach (var file in Directory.EnumerateFiles(dirName))
             {
                 var length = (int)new FileInfo(file).Length;
@@ -69,9 +78,18 @@ namespace SeaShell.IO
                     Console.Write(" ");
 
                 Console.WriteLine(new FileInfo(file).Name);
+                pipeRet.Add(new EnumerateDirectoryPipelineObject()
+                {
+                    StringValue = new FileInfo(file).Name
+                });
             }
 
-            return null;
+            return pipeRet;
         }
+    }
+
+    public class EnumerateDirectoryPipelineObject : IPipelinePrintable
+    {
+        public string StringValue { get; set; }
     }
 }

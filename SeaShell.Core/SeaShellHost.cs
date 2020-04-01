@@ -11,7 +11,7 @@ namespace SeaShell.Core
 {
     public static class SeaShellHost
     {
-        internal static readonly string Version = "0.2.0.240320";
+        internal static readonly string Version = "0.2.1.010420";
         internal static bool Continue = true;
 
         public static void Start()

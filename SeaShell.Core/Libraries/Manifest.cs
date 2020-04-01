@@ -1,6 +1,7 @@
 ﻿using ConfigAdapter.Ini;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -21,6 +22,9 @@ namespace SeaShell.Core.Libraries
 
         internal static Manifest Parse(string file)
         {
+            if (!File.Exists(file))
+                return null;
+
             var config = IniConfig.From(file);
 
             return new Manifest
