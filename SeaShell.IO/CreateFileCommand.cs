@@ -12,18 +12,18 @@ using System.Text;
 
 namespace SeaShell.IO
 {
-    public class CreateDirectoryCommand : ISeaShellCommand
+    public class CreateFileCommand : ISeaShellCommand
     {
-        public string Name => "Create-Directory";
+        public string Name => "Create-File";
 
         public CommandHelp Help => new CommandHelp
         {
-            Description = "Creates an empty directory.",
-            Example = "Create-Directory [/Target] DirPath /Name DirName",
+            Description = "Creates an empty file.",
+            Example = "Create-File [/Target] Path /Name File.txt",
             Parameters = new Dictionary<string, string>
             {
-                { "/Target (default)", "Specify the target directory. If missing, use current directory." },
-                { "/Name", "Specify the name of the directory to create." }
+                { "/Target (default)", "Path to the container directory. If missing, use current directory." },
+                { "/Name", "Name and extension of the new file." }
             }
         };
 
@@ -64,21 +64,24 @@ namespace SeaShell.IO
                 return null;
             }
 
-            var NewPath = Path.Combine(dirName, parameters.Single(p => p.Key == "Name").Value);
+            var fileName = parameters.Single(p => p.Key == "Name").Value;
 
-            if (Directory.Exists(NewPath))
-                ConsoleIO.WriteWarning($"Directory {NewPath} already exists.");
+            if (!Directory.Exists(dirName))
+                Directory.CreateDirectory(dirName);
+
+            if (File.Exists(Path.Combine(dirName, fileName)))
+                ConsoleIO.WriteWarning($"File {Path.Combine(dirName, fileName)} already exists.");
             else
-                Directory.CreateDirectory(NewPath);
+                File.Create(Path.Combine(dirName, fileName));
 
-            return new CreateDirectoryPipelineObject
+            return new CreateFilePipelineObject
             {
-                URI = NewPath
+                URI = Path.Combine(dirName, fileName)
             }.Enumerate();
         }
     }
 
-    public class CreateDirectoryPipelineObject : IPipelineLocatable
+    public class CreateFilePipelineObject : IPipelineLocatable
     {
         public string URI { get; set; }
     }
