@@ -12,6 +12,7 @@ namespace SeaShell.Core
     internal static class Commands
     {
         internal static IDictionary<string, ISeaShellCommand> AllCommands = new Dictionary<string, ISeaShellCommand>();
+        internal static IDictionary<string, IEnumerable<string>> CommandsPerLibrary = new Dictionary<string, IEnumerable<string>>();
 
         internal static void PopulateSystemCommands()
         {
@@ -20,6 +21,7 @@ namespace SeaShell.Core
             AllCommands.Add("Help", new HelpCommand());
             AllCommands.Add("List-Commands", new ListCommandsCommand());
             AllCommands.Add("Print", new PrintCommand());
+            AllCommands.Add("Change-Directory", new ChangeDirectoryCommand());
             AllCommands.Add("Otter", new OtterCommand());
         }
 
@@ -37,7 +39,7 @@ namespace SeaShell.Core
 
                 // Load assemblies
                 foreach (var asm in manifest.Assemblies)
-                    LibraryManager.LoadAssembly(Path.Combine(AsmDir, asm));
+                    LibraryManager.LoadAssembly(Path.Combine(AsmDir, asm), manifest.Name);
             }
         }
 

@@ -3,6 +3,7 @@ using SeaShell.Core.Grammar;
 using Sprache;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -11,11 +12,12 @@ namespace SeaShell.Core
 {
     public static class SeaShellHost
     {
-        internal static readonly string Version = "0.2.1.010420";
+        internal static readonly string Version = "0.3.0.170420";
         internal static bool Continue = true;
 
         public static void Start()
         {
+            InitializeFolders();
             ConsoleIO.Initialize();
             Commands.PopulateSystemCommands();
             Commands.PopulateGlobalCommands();
@@ -47,6 +49,17 @@ namespace SeaShell.Core
 
             Environment.CurrentDirectory = oldDir;
             ConsoleIO.Restore();
+        }
+
+        private static void InitializeFolders()
+        {
+            var baseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".SeaShell");
+            if (!Directory.Exists(baseDir))
+                Directory.CreateDirectory(baseDir);
+
+            var libDir = Path.Combine(baseDir, "Libraries");
+            if (!Directory.Exists(libDir))
+                Directory.CreateDirectory(libDir);
         }
     }
 }

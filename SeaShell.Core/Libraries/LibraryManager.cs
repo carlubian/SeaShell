@@ -7,12 +7,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.Loader;
 using System.Text;
 
 namespace SeaShell.Core.Libraries
 {
     internal static class LibraryManager
     {
+        internal static IDictionary<string, AssemblyLoadContext> Libraries = new Dictionary<string, AssemblyLoadContext>();
+
         internal static void InstallGlobalLibrary(string path)
         {
             // Libraries go in %UserProfile%\.seashell\Libraries
@@ -46,7 +50,9 @@ namespace SeaShell.Core.Libraries
 
             // Load assemblies
             foreach (var asm in manifest.Assemblies)
-                LoadAssembly(Path.Combine(AsmDir, asm));
+                LoadAssembly(Path.Combine(AsmDir, asm), manifest.Name);
+
+            ConsoleIO.WriteInfo($"Installed library {manifest.Name}");
         }
 
         internal static void Unpack(string path)
@@ -71,12 +77,44 @@ namespace SeaShell.Core.Libraries
             var config = IniConfig.From(manifest);
             var libName = config.Read("Library:Name");
 
+            if (File.Exists(Path.Combine(path, $"{libName}.ssl")))
+                File.Delete(Path.Combine(path, $"{libName}.ssl"));
+
             using (var Zip = new ZipFile(Path.Combine(path, $"{libName}.ssl")))
             {
                 Zip.AddFile(Path.Combine(path, "Manifest.ini"), "");
                 Zip.AddDirectory(Path.Combine(path, "Assemblies"), "Assemblies");
                 Zip.Save();
             }
+        }
+
+        internal static void Remove(string name)
+        {
+            var loadContext = new WeakReference<AssemblyLoadContext>(Libraries[name]);
+            Libraries.Remove(name);
+            loadContext.TryGetTarget(out var lc);
+
+            // Unregister all commands in the assembly
+            foreach (var cmd in Commands.CommandsPerLibrary[name])
+            {
+                Commands.AllCommands.Remove(cmd);
+            }
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            lc.Unloading += lc =>
+            {
+                var LibDir = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".SeaShell"), "Libraries");
+                foreach (var directory in Directory.EnumerateDirectories(LibDir))
+                    if (new DirectoryInfo(directory).Name.Equals(name))
+                    {
+                        CleanDirectory(Path.Combine(LibDir, directory));
+                        Directory.Delete(Path.Combine(LibDir, directory));
+                        break;
+                    }
+            };
+            lc.Unload();
+            
         }
 
         private static void CleanDirectory(string path)
@@ -93,15 +131,22 @@ namespace SeaShell.Core.Libraries
             }
         }
 
-        internal static void LoadAssembly(string asm)
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static void LoadAssembly(string asm, string libName)
         {
-            var lib = Assembly.LoadFrom(asm);
+            var loadContext = new LibraryLoadContext(asm);
+            //var lib = Assembly.LoadFrom(asm);
+            using var fs = new FileStream(asm, FileMode.Open, FileAccess.Read);
+            var lib = loadContext.LoadFromStream(fs);
+            Libraries.Add(libName, loadContext);
 
             // Populate commands
+            Commands.CommandsPerLibrary.Add(libName, new List<string>());
             foreach (var cmd in lib.GetTypes().Where(t => typeof(ISeaShellCommand).IsAssignableFrom(t)))
             {
                 var command = Activator.CreateInstance(cmd) as ISeaShellCommand;
                 Commands.AllCommands.Add(command.Name, command);
+                (Commands.CommandsPerLibrary[libName] as List<string>).Add(command.Name);
             }
         }
     }

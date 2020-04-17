@@ -19,32 +19,38 @@ namespace SeaShell.Core.SystemCommands
         public CommandHelp Help => new CommandHelp
         {
             Description = "Library manager for SeaShell",
-            Example = "Otter [/Pack /Unpack /Install /List /Remove]",
+            Example = "Otter [/Pack /Unpack /Install /List /Remove /Create]",
             Parameters = new Dictionary<string, string>
             {
                 { "/Pack", "Packs the content of a directory into a SeaShell SSL library." },
                 { "/Unpack", "Unpacks a SeaShell SSL library into a subdirectory besides it." },
                 { "/Install", "Installs a SeaShell SSL library in the global system catalog." },
                 { "/List", "Show all the libraries currently in the global system catalog." },
-                { "/Remove", "Packs the content of a directory into a SeaShell SSL library." }
+                { "/Remove", "Packs the content of a directory into a SeaShell SSL library." },
+                { "/Create", "Create a manifest for a new library." }
             }
         };
 
         public IEnumerable<dynamic> Invoke(IEnumerable<Parameter> parameters, IEnumerable<dynamic> pipeline)
         {
             // More than one parameter present
-            if (!Parameters.SeeIf(parameters).HasOnlyOne("Pack", "Unpack", "Install", "List", "Remove").Eval())
+            if (!Parameters.SeeIf(parameters).HasOnlyOne("Pack", "Unpack", "Install", "List", "Remove", "Create").Eval())
             {
-                SeaShellErrors.NotifyMutuallyExclusive("Pack", "Unpack", "Install", "List", "Remove");
+                SeaShellErrors.NotifyMutuallyExclusive("Pack", "Unpack", "Install", "List", "Remove", "Create");
                 return null;
             }
 
             // Pack
-            if (Parameters.SeeIf(parameters).HasParam("Pack").HasValue("Pack").Eval())
+            if (Parameters.SeeIf(parameters).HasParam("Pack").Eval())
             {
+                var dirName = Environment.CurrentDirectory;
+
+                if (parameters.Single(p => p.Key == "Pack").Value != "")
+                    dirName = parameters.Single(p => p.Key == "Pack").Value;
+
                 // TODO check for errors (missing directory, incorrect format)
-                var library = parameters.Single(p => p.Key == "Pack").Value;
-                LibraryManager.Pack(library);
+                LibraryManager.Pack(dirName);
+                ConsoleIO.WriteInfo($"Packed library from {dirName}");
             }
 
             // Unpack
@@ -53,6 +59,7 @@ namespace SeaShell.Core.SystemCommands
                 // TODO check for errors (missing file, incorrect format)
                 var library = parameters.Single(p => p.Key == "Unpack").Value;
                 LibraryManager.Unpack(library);
+                ConsoleIO.WriteInfo($"Unpacked library file {library}");
             }
 
             // Install
@@ -81,7 +88,35 @@ namespace SeaShell.Core.SystemCommands
                 }
             }
 
-            // Remove: Requires restart to unload assemblies?
+            // Remove
+            if (Parameters.SeeIf(parameters).HasParam("Remove").HasValue("Remove").Eval())
+            {
+                var library = parameters.Single(p => p.Key == "Remove").Value;
+                if (!Commands.CommandsPerLibrary.ContainsKey(library))
+                {
+                    ConsoleIO.WriteWarning($"No library named {library} is installed.");
+                    return null;
+                }
+
+                LibraryManager.Remove(library);
+                ConsoleIO.WriteInfo($"Removed library {library}");
+            }
+
+            // Create
+            if (Parameters.SeeIf(parameters).HasParam("Create").Eval())
+            {
+                var dirName = Environment.CurrentDirectory;
+
+                if (parameters.Single(p => p.Key == "Create").Value != "")
+                    dirName = parameters.Single(p => p.Key == "Create").Value;
+
+                // TODO check for existing manifest before overwriting
+                Directory.CreateDirectory(Path.Combine(dirName, "Assemblies"));
+                File.Create(Path.Combine(dirName, "Manifest.ini")).Close();
+                Manifest.WriteTemplateManifest(Path.Combine(dirName, "Manifest.ini"));
+
+                ConsoleIO.WriteInfo($"Created manifest on {dirName}");
+            }
 
             return null;
         }

@@ -40,5 +40,25 @@ namespace SeaShell.Core.Libraries
                 Assemblies = config.Read("Library:Assemblies").Split(',').Select(a => a.Trim()).ToArray()
             };
         }
+
+        internal static void WriteTemplateManifest(string file)
+        {
+            using (var writer = new StreamWriter(file))
+                foreach (var line in new string[] {
+                    "[SeaShell]",
+                    "Manifest Version = 1",
+                    "Host Version = 0.2 - 1.0",
+                    "Runtime Version = 3.1",
+                    "",
+                    "[Library]",
+                    "Name = Replace.With.Library.Name",
+                    "Version = 1.0.0",
+                    "Author = Your name or email here",
+                    "URI = https://www.github.com/YourUserHere/YourRepositoryHere",
+                    "Description = Description of your library here.",
+                    "Assemblies = YourAssembly.dll"
+                })
+                    writer.WriteLine(line);
+        }
     }
 }
