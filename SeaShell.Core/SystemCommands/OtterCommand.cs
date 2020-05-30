@@ -51,6 +51,7 @@ namespace SeaShell.Core.SystemCommands
                 // TODO check for errors (missing directory, incorrect format)
                 LibraryManager.Pack(dirName);
                 ConsoleIO.WriteInfo($"Packed library from {dirName}");
+                return null;
             }
 
             // Unpack
@@ -60,6 +61,7 @@ namespace SeaShell.Core.SystemCommands
                 var library = parameters.Single(p => p.Key == "Unpack").Value;
                 LibraryManager.Unpack(library);
                 ConsoleIO.WriteInfo($"Unpacked library file {library}");
+                return null;
             }
 
             // Install
@@ -68,6 +70,7 @@ namespace SeaShell.Core.SystemCommands
                 // TODO check for errors (missing file, incorrect format)
                 var library = parameters.Single(p => p.Key == "Install").Value;
                 LibraryManager.InstallGlobalLibrary(library);
+                return null;
             }
 
             // List
@@ -86,6 +89,7 @@ namespace SeaShell.Core.SystemCommands
                     ConsoleIO.WriteInfo($"{config.Read("Library:Name")} {config.Read("Library:Version").Pastel("#ECB310")}");
                     Console.WriteLine($"  {config.Read("Library:Description")}");
                 }
+                return null;
             }
 
             // Remove
@@ -100,6 +104,7 @@ namespace SeaShell.Core.SystemCommands
 
                 LibraryManager.Remove(library);
                 ConsoleIO.WriteInfo($"Removed library {library}");
+                return null;
             }
 
             // Create
@@ -116,8 +121,11 @@ namespace SeaShell.Core.SystemCommands
                 Manifest.WriteTemplateManifest(Path.Combine(dirName, "Manifest.ini"));
 
                 ConsoleIO.WriteInfo($"Created manifest on {dirName}");
+                return null;
             }
 
+            // No parameter present
+            SeaShellErrors.NotifyMissingOneOfParams("Pack", "Unpack", "Install", "List", "Remove", "Create");
             return null;
         }
     }
