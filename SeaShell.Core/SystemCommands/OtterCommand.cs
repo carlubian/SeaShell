@@ -69,7 +69,7 @@ namespace SeaShell.Core.SystemCommands
             {
                 // TODO check for errors (missing file, incorrect format)
                 var library = parameters.Single(p => p.Key == "Install").Value;
-                LibraryManager.InstallGlobalLibrary(library);
+                LibraryManager.InstallLibrary(library);
                 return null;
             }
 
@@ -79,6 +79,7 @@ namespace SeaShell.Core.SystemCommands
                 var BaseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".SeaShell");
                 var LibDir = Path.Combine(BaseDir, "Libraries");
 
+                // Global commands
                 foreach (var folder in Directory.EnumerateDirectories(LibDir))
                 {
                     var manifest = Directory.EnumerateFiles(folder).FirstOrDefault(f => f.EndsWith("Manifest.ini"));
@@ -89,6 +90,22 @@ namespace SeaShell.Core.SystemCommands
                     ConsoleIO.WriteInfo($"{config.Read("Library:Name")} {config.Read("Library:Version").Pastel("#ECB310")}");
                     Console.WriteLine($"  {config.Read("Library:Description")}");
                 }
+                // Local commands
+                if (SeaShellHost.Env.Equals("_system"))
+                    return null;
+
+                LibDir = Path.Combine(SeaShellHost.EnvPath, "SeaShell.Environment");
+                foreach (var folder in Directory.EnumerateDirectories(LibDir))
+                {
+                    var manifest = Directory.EnumerateFiles(folder).FirstOrDefault(f => f.EndsWith("Manifest.ini"));
+                    if (manifest is null)
+                        continue;
+
+                    var config = IniConfig.From(manifest);
+                    ConsoleIO.WriteInfo($"{config.Read("Library:Name")} {config.Read("Library:Version").Pastel("#ECB310")}");
+                    Console.WriteLine($"  {config.Read("Library:Description")}");
+                }
+
                 return null;
             }
 
@@ -96,7 +113,8 @@ namespace SeaShell.Core.SystemCommands
             if (Parameters.SeeIf(parameters).HasParam("Remove").HasValue("Remove").Eval())
             {
                 var library = parameters.Single(p => p.Key == "Remove").Value;
-                if (!Commands.CommandsPerLibrary.ContainsKey(library))
+                if (!Commands.CommandsPerLibrary.ContainsKey(library) &&
+                    !Commands.LocalCommandsPerLibrary.ContainsKey(library))
                 {
                     ConsoleIO.WriteWarning($"No library named {library} is installed.");
                     return null;

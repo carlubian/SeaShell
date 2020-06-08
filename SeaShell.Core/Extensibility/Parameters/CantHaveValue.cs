@@ -15,6 +15,6 @@ namespace SeaShell.Core.Extensibility.Parameters
             Name = name;
         }
 
-        public bool Invoke(IEnumerable<Parameter> source) => source.Single(p => p.Key.Equals(Name)).Value == "";
+        public bool Invoke(IEnumerable<Parameter> source) => source.FirstOrDefault(p => p.Key.Equals(Name))?.Value == "";
     }
 }

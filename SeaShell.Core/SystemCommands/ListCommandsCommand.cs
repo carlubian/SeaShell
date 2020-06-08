@@ -18,9 +18,16 @@ namespace SeaShell.Core.SystemCommands
 
         public IEnumerable<dynamic> Invoke(IEnumerable<Parameter> parameters, IEnumerable<dynamic> pipeline)
         {
+            // Global commands
             foreach (var cmd in Commands.AllCommands)
             {
                 ConsoleIO.WriteInfo(cmd.Key);
+                Console.WriteLine($"  {cmd.Value.Help.Description}");
+            }
+            // Local commands
+            foreach (var cmd in Commands.LocalCommands)
+            {
+                ConsoleIO.WriteInfo($"{cmd.Key} [VirtualEnv]");
                 Console.WriteLine($"  {cmd.Value.Help.Description}");
             }
 

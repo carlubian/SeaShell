@@ -12,8 +12,10 @@ namespace SeaShell.Core
 {
     public static class SeaShellHost
     {
-        internal static readonly string Version = "0.3.0.170420";
+        internal static readonly string Version = "0.4.0.080620";
         internal static bool Continue = true;
+        internal static string Env = "_system";
+        internal static string EnvPath = "";
 
         public static void Start()
         {
@@ -21,7 +23,6 @@ namespace SeaShell.Core
             ConsoleIO.Initialize();
             Commands.PopulateSystemCommands();
             Commands.PopulateGlobalCommands();
-            Commands.PopulateLocalCommands();
 
             var oldDir = Environment.CurrentDirectory;
 

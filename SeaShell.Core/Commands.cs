@@ -13,16 +13,20 @@ namespace SeaShell.Core
     {
         internal static IDictionary<string, ISeaShellCommand> AllCommands = new Dictionary<string, ISeaShellCommand>();
         internal static IDictionary<string, IEnumerable<string>> CommandsPerLibrary = new Dictionary<string, IEnumerable<string>>();
+        internal static IDictionary<string, ISeaShellCommand> LocalCommands = new Dictionary<string, ISeaShellCommand>();
+        internal static IDictionary<string, IEnumerable<string>> LocalCommandsPerLibrary = new Dictionary<string, IEnumerable<string>>();
 
         internal static void PopulateSystemCommands()
         {
-            AllCommands.Add("Environment", new EnvironmentCommand());
+            AllCommands.Add("Info", new InfoCommand());
             AllCommands.Add("Exit", new ExitCommand());
             AllCommands.Add("Help", new HelpCommand());
             AllCommands.Add("List-Commands", new ListCommandsCommand());
             AllCommands.Add("Print", new PrintCommand());
             AllCommands.Add("Change-Directory", new ChangeDirectoryCommand());
+            AllCommands.Add("Run-Script", new RunScriptCommand());
             AllCommands.Add("Otter", new OtterCommand());
+            AllCommands.Add("Environment", new EnvironmentCommand());
         }
 
         internal static void PopulateGlobalCommands()
@@ -43,13 +47,10 @@ namespace SeaShell.Core
             }
         }
 
-        internal static void PopulateLocalCommands()
-        {
-
-        }
-
         internal static ISeaShellCommand HandlerFor(string name)
         {
+            if (LocalCommands.ContainsKey(name))
+                return LocalCommands[name];
             if (AllCommands.ContainsKey(name))
                 return AllCommands[name];
 
