@@ -39,9 +39,19 @@ namespace SeaShell.Core.Extensibility
             ConsoleIO.WriteError($"The parameter {param} requires a value.");
         }
 
+        public static void NotifyParamValuePresent(string param)
+        {
+            ConsoleIO.WriteError($"The parameter {param} cannot have a value.");
+        }
+
         public static void NotifyMissingParam(string param)
         {
             ConsoleIO.WriteError($"The parameter {param} must be present.");
+        }
+
+        public static void NotifyParamPresent(string param)
+        {
+            ConsoleIO.WriteError($"The parameter {param} cannot be present.");
         }
 
         public static void NotifyMissingOneOfParams(params string[] oneOf)

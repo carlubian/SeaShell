@@ -7,6 +7,6 @@ namespace SeaShell.Core.Extensibility.Parameters
 {
     public interface IParameterCheck
     {
-        bool Invoke(IEnumerable<Parameter> source);
+        bool Eval(IEnumerable<Parameter> source);
     }
 }

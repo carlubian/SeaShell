@@ -5,54 +5,14 @@ using System.Text;
 
 namespace SeaShell.Core.Extensibility.Parameters
 {
-    public class ParameterCheckBuilder
+    public class ParameterCheckBuilder : IParameterCheckBuilder
     {
-        internal IList<IParameterCheck> checks = new List<IParameterCheck>();
-        internal IEnumerable<Parameter> source;
-
-        public ParameterCheckBuilder(IEnumerable<Parameter> source)
-        {
-            this.source = source;
-        }
-
-        public ParameterCheckBuilder HasParam(string name)
-        {
-            checks.Add(new MustBePresent(name));
-            return this;
-        }
-
-        public ParameterCheckBuilder HasNone(string name)
-        {
-            checks.Add(new CantBePresent(name));
-            return this;
-        }
-
-        public ParameterCheckBuilder HasValue(string name)
-        {
-            checks.Add(new MustHaveValue(name));
-            return this;
-        }
-
-        public ParameterCheckBuilder IsEmpty(string name)
-        {
-            checks.Add(new CantHaveValue(name));
-            return this;
-        }
-
-        public ParameterCheckBuilder HasOnlyOne(params string[] values)
-        {
-            checks.Add(new OnlyOneCanBePresent(values));
-            return this;
-        }
-
-        public bool Eval()
-        {
-            foreach (var check in checks)
-            {
-                if (check.Invoke(source) is false)
-                    return false;
-            }
-            return true;
-        }
+        public IParameterCheckBuilder And(params IParameterCheck[] @params) => new AndParamCheckBuilder(@params);
+        public IParameterCheckBuilder Or(params IParameterCheck[] @params) => throw new NotImplementedException();
+        public IParameterCheck ParamExists(string param) => new ParamExists(param);
+        public IParameterCheck ParamNotExists(string param) => new ParamNotExists(param);
+        public IParameterCheck ParamHasValue(string param) => new ParamHasValue(param);
+        public IParameterCheck ParamIsEmpty(string param) => new ParamIsEmpty(param);
+        public IParameterCheck MutuallyExclusive(params string[] @params) => new MutuallyExclusive(@params);
     }
 }
