@@ -31,7 +31,7 @@ namespace SeaShell.Core
                 ConsoleIO.ShowPrompt();
                 var pipeline = SeaShellParser.pipeline.Parse(Console.ReadLine());
 
-                IEnumerable<dynamic> lastReturn = null;
+                IEnumerable<dynamic> lastReturn = Enumerable.Empty<dynamic>();
                 foreach (var command in pipeline.Commands)
                 {
                     if (SeaShellErrors.CheckLowercaseCommands(command.Name))
@@ -42,7 +42,7 @@ namespace SeaShell.Core
                         SeaShellErrors.NotifyUnknownCommand(command.Name);
                         break;
                     }
-                    if (lastReturn != null)
+                    if (!lastReturn.Any())
                         command.PipelineParameter = lastReturn;
                     lastReturn = handler.Invoke(command.Parameters, lastReturn);
                 }

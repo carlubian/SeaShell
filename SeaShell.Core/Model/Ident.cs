@@ -18,7 +18,7 @@ namespace SeaShell.Core.Model
             return Content.ToString();
         }
 
-        public override bool Equals(object obj) => Content.Equals(obj);
+        public override bool Equals(object? obj) => Content.Equals(obj);
 
         public override int GetHashCode() => Content.GetHashCode();
 

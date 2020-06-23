@@ -121,7 +121,7 @@ namespace SeaShell.Core.Libraries
             GC.Collect();
             GC.WaitForPendingFinalizers();
 
-            lc.Unload();
+            lc?.Unload();
 
             var LibDir = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".SeaShell"), "Libraries");
             foreach (var directory in Directory.EnumerateDirectories(LibDir))
@@ -149,7 +149,7 @@ namespace SeaShell.Core.Libraries
             GC.Collect();
             GC.WaitForPendingFinalizers();
 
-            lc.Unload();
+            lc?.Unload();
 
             var LibDir = Path.Combine(SeaShellHost.EnvPath, "SeaShell.Environment");
             foreach (var directory in Directory.EnumerateDirectories(LibDir))
@@ -188,9 +188,11 @@ namespace SeaShell.Core.Libraries
             Commands.CommandsPerLibrary.Add(libName, new List<string>());
             foreach (var cmd in lib.GetTypes().Where(t => typeof(ISeaShellCommand).IsAssignableFrom(t)))
             {
-                var command = Activator.CreateInstance(cmd) as ISeaShellCommand;
+                if (!(Activator.CreateInstance(cmd) is ISeaShellCommand command))
+                    continue;
+
                 Commands.AllCommands.Add(command.Name, command);
-                (Commands.CommandsPerLibrary[libName] as List<string>).Add(command.Name);
+                (Commands.CommandsPerLibrary[libName] as List<string>)?.Add(command.Name);
             }
         }
 
@@ -253,9 +255,11 @@ namespace SeaShell.Core.Libraries
             Commands.LocalCommandsPerLibrary.Add(libName, new List<string>());
             foreach (var cmd in lib.GetTypes().Where(t => typeof(ISeaShellCommand).IsAssignableFrom(t)))
             {
-                var command = Activator.CreateInstance(cmd) as ISeaShellCommand;
+                if (!(Activator.CreateInstance(cmd) is ISeaShellCommand command))
+                    continue;
+
                 Commands.LocalCommands.Add(command.Name, command);
-                (Commands.LocalCommandsPerLibrary[libName] as List<string>).Add(command.Name);
+                (Commands.LocalCommandsPerLibrary[libName] as List<string>)?.Add(command.Name);
             }
         }
     }

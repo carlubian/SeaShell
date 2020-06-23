@@ -47,7 +47,7 @@ namespace SeaShell.Core
             }
         }
 
-        internal static ISeaShellCommand HandlerFor(string name)
+        internal static ISeaShellCommand? HandlerFor(string name)
         {
             if (LocalCommands.ContainsKey(name))
                 return LocalCommands[name];

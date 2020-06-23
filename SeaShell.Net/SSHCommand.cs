@@ -1,4 +1,5 @@
 ﻿using Renci.SshNet;
+using Renci.SshNet.Common;
 using SeaShell.Core;
 using SeaShell.Core.Extensibility;
 using SeaShell.Core.Extensibility.Parameters;
@@ -79,6 +80,12 @@ namespace SeaShell.Net
 
             var client = new SshClient(connectionString.Split("@")[1], connectionString.Split("@")[0], password);
             client.Connect();
+
+            var input = new PipeStream();
+            var output = new PipeStream();
+            var shell = client.CreateShell(input, output, output);
+            shell.Start();
+
         }
     }
 }

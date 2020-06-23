@@ -1,6 +1,7 @@
 ﻿using DotNet.Misc.Extensions.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace SeaShell.Core.Model
@@ -13,7 +14,7 @@ namespace SeaShell.Core.Model
         {
             set
             {
-                (Parameters as IList<Parameter>).Add(new Parameter("_default", value));
+                (Parameters as IList<Parameter>)?.Add(new Parameter("_default", value));
             }
         }
         public IEnumerable<dynamic> PipelineParameter { get; internal set; }
@@ -22,6 +23,7 @@ namespace SeaShell.Core.Model
         {
             Name = name;
             Parameters = parameters;
+            PipelineParameter = Enumerable.Empty<dynamic>();
         }
 
         public override string ToString() => $"{Name} {Parameters.Stringify(p => p.ToString(), " ")}";

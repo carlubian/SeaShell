@@ -9,10 +9,12 @@ namespace SeaShell.Core.Libraries
 {
     internal class VirtualEnv
     {
+#pragma warning disable CS8618 // El campo que acepta valores NULL está sin inicializar. Considere la posibilidad de declararlo como que acepta valores NULL.
         internal string Name { get; set; }
         internal string Description { get; set; }
+#pragma warning restore CS8618 // El campo que acepta valores NULL está sin inicializar. Considere la posibilidad de declararlo como que acepta valores NULL.
 
-        internal static VirtualEnv Parse(string file)
+        internal static VirtualEnv? Parse(string file)
         {
             if (!File.Exists(file))
                 return null;

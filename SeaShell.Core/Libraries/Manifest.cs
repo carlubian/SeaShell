@@ -9,6 +9,7 @@ namespace SeaShell.Core.Libraries
 {
     internal class Manifest
     {
+#pragma warning disable CS8618 // El campo que acepta valores NULL está sin inicializar. Considere la posibilidad de declararlo como que acepta valores NULL.
         internal string ManifestVersion { get; set; }
         internal string HostVersion { get; set; }
         internal string RuntimeVersion { get; set; }
@@ -19,8 +20,9 @@ namespace SeaShell.Core.Libraries
         internal string URI { get; set; }
         internal string Description { get; set; }
         internal string[] Assemblies { get; set; }
+#pragma warning restore CS8618 // El campo que acepta valores NULL está sin inicializar. Considere la posibilidad de declararlo como que acepta valores NULL.
 
-        internal static Manifest Parse(string file)
+        internal static Manifest? Parse(string file)
         {
             if (!File.Exists(file))
                 return null;
