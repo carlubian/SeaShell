@@ -1,6 +1,6 @@
 ﻿using SeaShell.Core.Extensibility;
 using SeaShell.Core.Extensibility.DuckTyping;
-using SeaShell.Core.Extensibility.Parameters;
+using static SeaShell.Core.Extensibility.Parameters.ParameterCheckBuilder;
 using SeaShell.Core.Model;
 using System;
 using System.Collections.Generic;
@@ -28,29 +28,29 @@ namespace SeaShell.Core.SystemCommands
             var text = "";
 
             // Default parameter and Text parameter present
-            if (Parameters.SeeIf(parameters).HasParam("_default").HasParam("Text").Eval())
+            if (And(ParamHasValue("_default"), ParamExists("Text"), ParamHasValue("Text")).Eval(parameters))
             {
                 SeaShellErrors.NotifyMutuallyExclusive("_default", "Text");
-                return null;
+                return Enumerable.Empty<dynamic>();
             }
 
             // Text parameter without value
-            if (Parameters.SeeIf(parameters).HasParam("Text").IsEmpty("Text").Eval())
+            if (And(ParamExists("Text"), ParamIsEmpty("Text")).Eval(parameters))
             {
                 SeaShellErrors.NotifyParamMissingValue("Text");
-                return null;
+                return Enumerable.Empty<dynamic>();
             }
 
             // Default parameter with value
-            if (Parameters.SeeIf(parameters).HasValue("_default").Eval())
+            if (And(ParamHasValue("_default"), ParamNotExists("Text")).Eval(parameters))
             {
-                text = parameters.Single(p => p.Key == "_default").Value;
+                parameters.TryGetValue("_default", out text);
             }
 
             // Text parameter with value
-            if (Parameters.SeeIf(parameters).HasParam("Text").HasValue("Text").Eval())
+            if (And(ParamIsEmpty("_default"), ParamExists("Text"), ParamHasValue("Text")).Eval(parameters))
             {
-                text = parameters.Single(p => p.Key == "Text").Value;
+                parameters.TryGetValue("Text", out text);
             }
 
             if (text != "")
@@ -63,7 +63,7 @@ namespace SeaShell.Core.SystemCommands
                 if (pipeline is null)
                 {
                     ConsoleIO.WriteError("Print command called outside a pipeline, or previous command returned empty object.");
-                    return null;
+                    return Enumerable.Empty<dynamic>();
                 }
 
                 foreach (var obj in pipeline)
@@ -73,7 +73,7 @@ namespace SeaShell.Core.SystemCommands
                 }
             }
 
-            return null;
+            return Enumerable.Empty<dynamic>();
         }
     }
 }

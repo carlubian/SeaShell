@@ -1,6 +1,6 @@
 ﻿using Pastel;
 using SeaShell.Core.Extensibility;
-using SeaShell.Core.Extensibility.Parameters;
+using static SeaShell.Core.Extensibility.Parameters.ParameterCheckBuilder;
 using SeaShell.Core.Model;
 using System;
 using System.Collections.Generic;
@@ -28,39 +28,36 @@ namespace SeaShell.Core.SystemCommands
             var cmdName = "";
 
             // Command name in default parameter
-            if (Parameters.SeeIf(parameters).HasParam("_default").HasNone("Command")
-                .HasValue("_default").Eval())
+            if (And(ParamHasValue("_default"), ParamNotExists("Command")).Eval(parameters))
             {
-                cmdName = parameters.Single(p => p.Key == "_default").Value;
+                parameters.TryGetValue("_default", out cmdName);
             }
 
             // Command name in /Command parameter
-            if (Parameters.SeeIf(parameters).HasParam("Command").HasValue("Command")
-                .IsEmpty("_default").Eval())
+            if (And(ParamIsEmpty("_default"), ParamExists("Command"), ParamHasValue("Command")).Eval(parameters))
             {
-                cmdName = parameters.Single(p => p.Key == "Command").Value;
+                parameters.TryGetValue("Command", out cmdName);
             }
 
             // No default value and Command parameter missing
-            if (Parameters.SeeIf(parameters).IsEmpty("_default").HasNone("Command").Eval())
+            if (And(ParamIsEmpty("_default"), ParamNotExists("Command")).Eval(parameters))
             {
                 SeaShellErrors.NotifyMissingParam("Command");
-                return null;
+                return Enumerable.Empty<dynamic>();
             }
 
             // Command parameter is empty
-            if (Parameters.SeeIf(parameters).HasParam("Command").IsEmpty("Command").Eval())
+            if (And(ParamIsEmpty("_default"), ParamExists("Command"), ParamIsEmpty("Command")).Eval(parameters))
             {
                 SeaShellErrors.NotifyParamMissingValue("Command");
-                return null;
+                return Enumerable.Empty<dynamic>();
             }
 
             // Default parameter has value and Command parameter present
-            if (Parameters.SeeIf(parameters).HasValue("_default").HasParam("Command")
-                .HasValue("Command").Eval())
+            if (And(ParamHasValue("_default"), ParamExists("Command"), ParamHasValue("Command")).Eval(parameters))
             {
                 SeaShellErrors.NotifyMutuallyExclusive("_default", "Command");
-                return null;
+                return Enumerable.Empty<dynamic>();
             }
 
             var cmd = Commands.HandlerFor(cmdName);
@@ -69,7 +66,7 @@ namespace SeaShell.Core.SystemCommands
             if (cmd is null)
             {
                 ConsoleIO.WriteError($"The command {cmdName} is not recognized.");
-                return null;
+                return Enumerable.Empty<dynamic>();
             }
 
             var cmdHelp = cmd.Help;
@@ -85,7 +82,7 @@ namespace SeaShell.Core.SystemCommands
             else
                 Console.WriteLine("This command has no parameters.".Pastel("#2DA8CA"));
 
-            return null;
+            return Enumerable.Empty<dynamic>();
         }
     }
 }

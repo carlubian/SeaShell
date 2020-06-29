@@ -1,12 +1,12 @@
 ﻿using DotNet.Misc.Extensions.Linq;
 using SeaShell.Core.Extensibility;
 using SeaShell.Core.Extensibility.DuckTyping;
-using SeaShell.Core.Extensibility.Parameters;
 using SeaShell.Core.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using static SeaShell.Core.Extensibility.Parameters.ParameterCheckBuilder;
 
 namespace SeaShell.Core.SystemCommands
 {
@@ -26,35 +26,21 @@ namespace SeaShell.Core.SystemCommands
 
         public IEnumerable<dynamic> Invoke(IEnumerable<Parameter> parameters, IEnumerable<dynamic> pipeline)
         {
-            var newPath = Environment.CurrentDirectory;
-
-            // Default parameter has a value
-            if (Parameters.SeeIf(parameters).HasValue("_default").HasNone("Target").Eval())
+            if (And(Or(ParamHasValue("_default"), ParamHasValue("Target")), 
+                MutuallyExclusive("_default", "Target")).Eval(parameters))
             {
-                newPath = parameters.Single(p => p.Key == "_default").Value;
+                if (!parameters.TryGetValue("_default", out var newPath))
+                    parameters.TryGetValue("Target", out newPath);
+
+                Environment.CurrentDirectory = newPath;
+
+                return new ChangeDirectoryPipelineObject
+                {
+                    URI = Environment.CurrentDirectory
+                }.Enumerate();
             }
 
-            // Target parameter has a value
-            if (Parameters.SeeIf(parameters).IsEmpty("_default").HasParam("Target")
-                .HasValue("Target").Eval())
-            {
-                newPath = parameters.Single(p => p.Key == "Target").Value;
-            }
-
-            // Both default and Target parameters have value
-            if (Parameters.SeeIf(parameters).HasValue("_default").HasParam("Target")
-                .HasValue("Target").Eval())
-            {
-                SeaShellErrors.NotifyMutuallyExclusive("_default", "Target");
-                return null;
-            }
-
-            Environment.CurrentDirectory = newPath;
-
-            return new ChangeDirectoryPipelineObject
-            {
-                URI = Environment.CurrentDirectory
-            }.Enumerate();
+            return Enumerable.Empty<dynamic>();
         }
     }
 

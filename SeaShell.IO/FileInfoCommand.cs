@@ -1,7 +1,7 @@
 ﻿using SeaShell.Core;
 using SeaShell.Core.Extensibility;
 using SeaShell.Core.Extensibility.DuckTyping;
-using SeaShell.Core.Extensibility.Parameters;
+using static SeaShell.Core.Extensibility.Parameters.ParameterCheckBuilder;
 using SeaShell.Core.Model;
 using System;
 using System.Collections.Generic;
@@ -30,29 +30,29 @@ namespace SeaShell.IO
             var path = "";
 
             // Default parameter and Target parameter present
-            if (Parameters.SeeIf(parameters).HasParam("_default").HasParam("Target").Eval())
+            if (And(ParamHasValue("_default"), ParamExists("Target"), ParamHasValue("Target")).Eval(parameters))
             {
                 SeaShellErrors.NotifyMutuallyExclusive("_default", "Target");
                 return null;
             }
 
             // Target parameter without value
-            if (Parameters.SeeIf(parameters).HasParam("Target").IsEmpty("Target").Eval())
+            if (And(ParamExists("Target"), ParamIsEmpty("Target")).Eval(parameters))
             {
                 SeaShellErrors.NotifyParamMissingValue("Target");
                 return null;
             }
 
             // Default parameter with value
-            if (Parameters.SeeIf(parameters).HasValue("_default").Eval())
+            if (And(ParamHasValue("_default"), ParamNotExists("Target")).Eval(parameters))
             {
                 path = parameters.Single(p => p.Key == "_default").Value;
             }
 
             // Target parameter with value
-            if (Parameters.SeeIf(parameters).HasParam("Target").HasValue("Target").Eval())
+            if (And(ParamIsEmpty("_default"), ParamExists("Target"), ParamHasValue("Target")).Eval(parameters))
             {
-                path = parameters.Single(p => p.Key == "Target").Value;
+                parameters.TryGetValue("Target", out path);
             }
 
             if (path != "")

@@ -2,6 +2,7 @@
 using SeaShell.Core.Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace SeaShell.Core.SystemCommands
@@ -31,7 +32,7 @@ namespace SeaShell.Core.SystemCommands
                 Console.WriteLine($"  {cmd.Value.Help.Description}");
             }
 
-            return null;
+            return Enumerable.Empty<dynamic>();
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using ConfigAdapter.Ini;
 using Pastel;
 using SeaShell.Core.Extensibility;
-using SeaShell.Core.Extensibility.Parameters;
+using static SeaShell.Core.Extensibility.Parameters.ParameterCheckBuilder;
 using SeaShell.Core.Libraries;
 using SeaShell.Core.Model;
 using System;
@@ -33,118 +33,114 @@ namespace SeaShell.Core.SystemCommands
 
         public IEnumerable<dynamic> Invoke(IEnumerable<Parameter> parameters, IEnumerable<dynamic> pipeline)
         {
+            if (And(Or(ParamExists("Pack"), ParamExists("Unpack"), ParamExists("Install"), ParamExists("List"), ParamExists("Remove"), ParamExists("Create")),
+                MutuallyExclusive("Pack", "Unpack", "Install", "List", "Remove", "Create")).Eval(parameters))
+            {
+                // Pack
+                if (parameters.TryGetValue("Pack", out var PackValue))
+                {
+                    var dirName = Environment.CurrentDirectory;
+
+                    if (PackValue != "")
+                        dirName = PackValue;
+
+                    // TODO check for errors (missing directory, incorrect format)
+                    LibraryManager.Pack(dirName);
+                    ConsoleIO.WriteInfo($"Packed library from {dirName}");
+                    return Enumerable.Empty<dynamic>();
+                }
+
+                // Unpack
+                if (parameters.TryGetValue("Unpack", out var UnpackValue))
+                {
+                    // TODO check for errors (missing file, incorrect format)
+                    var library = UnpackValue;
+                    LibraryManager.Unpack(library);
+                    ConsoleIO.WriteInfo($"Unpacked library file {library}");
+                    return Enumerable.Empty<dynamic>();
+                }
+
+                // Install
+                if (parameters.TryGetValue("Install", out var InstallValue))
+                {
+                    // TODO check for errors (missing file, incorrect format)
+                    LibraryManager.InstallLibrary(InstallValue);
+                    return Enumerable.Empty<dynamic>();
+                }
+
+                // List
+                if (parameters.TryGetValue("List", out var ListValue))
+                {
+                    var BaseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".SeaShell");
+                    var LibDir = Path.Combine(BaseDir, "Libraries");
+
+                    // Global commands
+                    foreach (var folder in Directory.EnumerateDirectories(LibDir))
+                    {
+                        var manifest = Directory.EnumerateFiles(folder).FirstOrDefault(f => f.EndsWith("Manifest.ini"));
+                        if (manifest is null)
+                            continue;
+
+                        var config = IniConfig.From(manifest);
+                        ConsoleIO.WriteInfo($"{config.Read("Library:Name")} {config.Read("Library:Version").Pastel("#ECB310")}");
+                        Console.WriteLine($"  {config.Read("Library:Description")}");
+                    }
+                    // Local commands
+                    if (SeaShellHost.Env.Equals("_system"))
+                        return Enumerable.Empty<dynamic>();
+
+                    LibDir = Path.Combine(SeaShellHost.EnvPath, "SeaShell.Environment");
+                    foreach (var folder in Directory.EnumerateDirectories(LibDir))
+                    {
+                        var manifest = Directory.EnumerateFiles(folder).FirstOrDefault(f => f.EndsWith("Manifest.ini"));
+                        if (manifest is null)
+                            continue;
+
+                        var config = IniConfig.From(manifest);
+                        ConsoleIO.WriteInfo($"{config.Read("Library:Name")} {config.Read("Library:Version").Pastel("#ECB310")}");
+                        Console.WriteLine($"  {config.Read("Library:Description")}");
+                    }
+
+                    return Enumerable.Empty<dynamic>();
+                }
+
+                // Remove
+                if (parameters.TryGetValue("Remove", out var RemoveValue))
+                {
+                    var library = RemoveValue;
+                    if (!Commands.CommandsPerLibrary.ContainsKey(library) &&
+                        !Commands.LocalCommandsPerLibrary.ContainsKey(library))
+                    {
+                        ConsoleIO.WriteWarning($"No library named {library} is installed.");
+                        return Enumerable.Empty<dynamic>();
+                    }
+
+                    LibraryManager.Remove(library);
+                    ConsoleIO.WriteInfo($"Removed library {library}");
+                    return Enumerable.Empty<dynamic>();
+                }
+
+                // Create
+                if (parameters.TryGetValue("Create", out var CreateValue))
+                {
+                    var dirName = Environment.CurrentDirectory;
+
+                    if (CreateValue != "")
+                        dirName = CreateValue;
+
+                    // TODO check for existing manifest before overwriting
+                    Directory.CreateDirectory(Path.Combine(dirName, "Assemblies"));
+                    File.Create(Path.Combine(dirName, "Manifest.ini")).Close();
+                    Manifest.WriteTemplateManifest(Path.Combine(dirName, "Manifest.ini"));
+
+                    ConsoleIO.WriteInfo($"Created manifest on {dirName}");
+                    return Enumerable.Empty<dynamic>();
+                }
+            }
+
             // More than one parameter present
-            if (!Parameters.SeeIf(parameters).HasOnlyOne("Pack", "Unpack", "Install", "List", "Remove", "Create").Eval())
-            {
-                SeaShellErrors.NotifyMutuallyExclusive("Pack", "Unpack", "Install", "List", "Remove", "Create");
-                return null;
-            }
-
-            // Pack
-            if (Parameters.SeeIf(parameters).HasParam("Pack").Eval())
-            {
-                var dirName = Environment.CurrentDirectory;
-
-                if (parameters.Single(p => p.Key == "Pack").Value != "")
-                    dirName = parameters.Single(p => p.Key == "Pack").Value;
-
-                // TODO check for errors (missing directory, incorrect format)
-                LibraryManager.Pack(dirName);
-                ConsoleIO.WriteInfo($"Packed library from {dirName}");
-                return null;
-            }
-
-            // Unpack
-            if (Parameters.SeeIf(parameters).HasParam("Unpack").HasValue("Unpack").Eval())
-            {
-                // TODO check for errors (missing file, incorrect format)
-                var library = parameters.Single(p => p.Key == "Unpack").Value;
-                LibraryManager.Unpack(library);
-                ConsoleIO.WriteInfo($"Unpacked library file {library}");
-                return null;
-            }
-
-            // Install
-            if (Parameters.SeeIf(parameters).HasParam("Install").HasValue("Install").Eval())
-            {
-                // TODO check for errors (missing file, incorrect format)
-                var library = parameters.Single(p => p.Key == "Install").Value;
-                LibraryManager.InstallLibrary(library);
-                return null;
-            }
-
-            // List
-            if (Parameters.SeeIf(parameters).HasParam("List").Eval())
-            {
-                var BaseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".SeaShell");
-                var LibDir = Path.Combine(BaseDir, "Libraries");
-
-                // Global commands
-                foreach (var folder in Directory.EnumerateDirectories(LibDir))
-                {
-                    var manifest = Directory.EnumerateFiles(folder).FirstOrDefault(f => f.EndsWith("Manifest.ini"));
-                    if (manifest is null)
-                        continue;
-
-                    var config = IniConfig.From(manifest);
-                    ConsoleIO.WriteInfo($"{config.Read("Library:Name")} {config.Read("Library:Version").Pastel("#ECB310")}");
-                    Console.WriteLine($"  {config.Read("Library:Description")}");
-                }
-                // Local commands
-                if (SeaShellHost.Env.Equals("_system"))
-                    return null;
-
-                LibDir = Path.Combine(SeaShellHost.EnvPath, "SeaShell.Environment");
-                foreach (var folder in Directory.EnumerateDirectories(LibDir))
-                {
-                    var manifest = Directory.EnumerateFiles(folder).FirstOrDefault(f => f.EndsWith("Manifest.ini"));
-                    if (manifest is null)
-                        continue;
-
-                    var config = IniConfig.From(manifest);
-                    ConsoleIO.WriteInfo($"{config.Read("Library:Name")} {config.Read("Library:Version").Pastel("#ECB310")}");
-                    Console.WriteLine($"  {config.Read("Library:Description")}");
-                }
-
-                return null;
-            }
-
-            // Remove
-            if (Parameters.SeeIf(parameters).HasParam("Remove").HasValue("Remove").Eval())
-            {
-                var library = parameters.Single(p => p.Key == "Remove").Value;
-                if (!Commands.CommandsPerLibrary.ContainsKey(library) &&
-                    !Commands.LocalCommandsPerLibrary.ContainsKey(library))
-                {
-                    ConsoleIO.WriteWarning($"No library named {library} is installed.");
-                    return null;
-                }
-
-                LibraryManager.Remove(library);
-                ConsoleIO.WriteInfo($"Removed library {library}");
-                return null;
-            }
-
-            // Create
-            if (Parameters.SeeIf(parameters).HasParam("Create").Eval())
-            {
-                var dirName = Environment.CurrentDirectory;
-
-                if (parameters.Single(p => p.Key == "Create").Value != "")
-                    dirName = parameters.Single(p => p.Key == "Create").Value;
-
-                // TODO check for existing manifest before overwriting
-                Directory.CreateDirectory(Path.Combine(dirName, "Assemblies"));
-                File.Create(Path.Combine(dirName, "Manifest.ini")).Close();
-                Manifest.WriteTemplateManifest(Path.Combine(dirName, "Manifest.ini"));
-
-                ConsoleIO.WriteInfo($"Created manifest on {dirName}");
-                return null;
-            }
-
-            // No parameter present
-            SeaShellErrors.NotifyMissingOneOfParams("Pack", "Unpack", "Install", "List", "Remove", "Create");
-            return null;
+            SeaShellErrors.NotifyMutuallyExclusive("Pack", "Unpack", "Install", "List", "Remove", "Create");
+            return Enumerable.Empty<dynamic>();
         }
     }
 }

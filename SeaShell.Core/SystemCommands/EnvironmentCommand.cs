@@ -1,5 +1,5 @@
 ﻿using SeaShell.Core.Extensibility;
-using SeaShell.Core.Extensibility.Parameters;
+using static SeaShell.Core.Extensibility.Parameters.ParameterCheckBuilder;
 using SeaShell.Core.Libraries;
 using SeaShell.Core.Model;
 using System;
@@ -29,74 +29,71 @@ namespace SeaShell.Core.SystemCommands
 
         public IEnumerable<dynamic> Invoke(IEnumerable<Parameter> parameters, IEnumerable<dynamic> pipeline)
         {
+            if(And(Or(ParamExists("Load"), ParamExists("Unload"), ParamExists("Create"), ParamExists("Info")), 
+                MutuallyExclusive("Load", "Unload", "Create", "Info")).Eval(parameters))
+            {
+                // Load
+                if(parameters.TryGetValue("Load", out var LoadValue))
+                {
+                    var dirName = Environment.CurrentDirectory;
+
+                    if (LoadValue != "")
+                        dirName = LoadValue;
+
+                    // TODO check for errors (missing directory, incorrect format)
+                    LibraryManager.LoadVirtual(dirName);
+                    ConsoleIO.WriteInfo($"Loaded virtual environment {SeaShellHost.Env}");
+                    return Enumerable.Empty<dynamic>();
+                }
+
+                // Unload
+                if (parameters.TryGetValue("Unload", out var UnloadValue))
+                {
+                    if (SeaShellHost.Env.Equals("_system"))
+                    {
+                        ConsoleIO.WriteWarning($"No active virtual environment to unload.");
+                        return Enumerable.Empty<dynamic>();
+                    }
+
+                    LibraryManager.UnloadVirtual();
+                    ConsoleIO.WriteInfo($"Unloaded virtual environment.");
+                    return Enumerable.Empty<dynamic>();
+                }
+
+                // Create
+                if (parameters.TryGetValue("Create", out var CreateValue))
+                {
+                    var dirName = Environment.CurrentDirectory;
+
+                    if (CreateValue != "")
+                        dirName = CreateValue;
+
+                    // TODO check for existing environment before overwriting
+                    Directory.CreateDirectory(Path.Combine(dirName, "SeaShell.Environment"));
+                    File.Create(Path.Combine(dirName, "SeaShell.Environment.ini")).Close();
+                    VirtualEnv.WriteTemplateEnvironment(Path.Combine(dirName, "SeaShell.Environment.ini"));
+
+                    ConsoleIO.WriteInfo($"Created virtual environment on {dirName}");
+                    return Enumerable.Empty<dynamic>();
+                }
+
+                // Info
+                if (parameters.TryGetValue("Info", out var InfoValue))
+                {
+                    if (SeaShellHost.Env.Equals("_system"))
+                    {
+                        ConsoleIO.WriteInfo($"No active virtual environment.");
+                        return Enumerable.Empty<dynamic>();
+                    }
+
+                    ConsoleIO.WriteInfo($"Active virtual environment {SeaShellHost.Env}.");
+                    return Enumerable.Empty<dynamic>();
+                }
+            }
+
             // More than one parameter present
-            if (!Parameters.SeeIf(parameters).HasOnlyOne("Load", "Unload", "Create", "Info").Eval())
-            {
-                SeaShellErrors.NotifyMutuallyExclusive("Load", "Unload", "Create", "Info");
-                return null;
-            }
-
-            // Load
-            if (Parameters.SeeIf(parameters).HasParam("Load").Eval())
-            {
-                var dirName = Environment.CurrentDirectory;
-
-                if (parameters.Single(p => p.Key == "Load").Value != "")
-                    dirName = parameters.Single(p => p.Key == "Load").Value;
-
-                // TODO check for errors (missing directory, incorrect format)
-                LibraryManager.LoadVirtual(dirName);
-                ConsoleIO.WriteInfo($"Loaded virtual environment {SeaShellHost.Env}");
-                return null;
-            }
-
-            // Unload
-            if (Parameters.SeeIf(parameters).HasParam("Unload").Eval())
-            {
-                if (SeaShellHost.Env.Equals("_system"))
-                {
-                    ConsoleIO.WriteWarning($"No active virtual environment to unload.");
-                    return null;
-                }
-
-                LibraryManager.UnloadVirtual();
-                ConsoleIO.WriteInfo($"Unloaded virtual environment.");
-                return null;
-            }
-
-            // Create
-            if (Parameters.SeeIf(parameters).HasParam("Create").Eval())
-            {
-                var dirName = Environment.CurrentDirectory;
-
-                if (parameters.Single(p => p.Key == "Create").Value != "")
-                    dirName = parameters.Single(p => p.Key == "Create").Value;
-
-                // TODO check for existing environment before overwriting
-                Directory.CreateDirectory(Path.Combine(dirName, "SeaShell.Environment"));
-                File.Create(Path.Combine(dirName, "SeaShell.Environment.ini")).Close();
-                VirtualEnv.WriteTemplateEnvironment(Path.Combine(dirName, "SeaShell.Environment.ini"));
-
-                ConsoleIO.WriteInfo($"Created virtual environment on {dirName}");
-                return null;
-            }
-
-            // Info
-            if (Parameters.SeeIf(parameters).HasParam("Info").Eval())
-            {
-                if (SeaShellHost.Env.Equals("_system"))
-                {
-                    ConsoleIO.WriteInfo($"No active virtual environment.");
-                    return null;
-                }
-
-                ConsoleIO.WriteInfo($"Active virtual environment {SeaShellHost.Env}.");
-                return null;
-            }
-
-            // No parameter present
-            SeaShellErrors.NotifyMissingOneOfParams("Load", "Unload", "Create", "Info");
-            return null;
+            SeaShellErrors.NotifyMutuallyExclusive("Load", "Unload", "Create", "Info");
+            return Enumerable.Empty<dynamic>();
         }
     }
 }

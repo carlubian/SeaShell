@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeaShell", "SeaShell\SeaShe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeaShell.IO", "SeaShell.IO\SeaShell.IO.csproj", "{61D21A65-6DF2-45EC-BF43-3050187A4E15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeaShell.Net", "SeaShell.Net\SeaShell.Net.csproj", "{B353E5DC-9D03-4350-A81F-AAD6EB27D3D1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MareNostrum.TimeTracker", "MareNostrum.TimeTracker\MareNostrum.TimeTracker.csproj", "{0FF8A2F7-26CF-46D2-9BF3-F115CA6D9058}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,10 @@ Global
 		{61D21A65-6DF2-45EC-BF43-3050187A4E15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61D21A65-6DF2-45EC-BF43-3050187A4E15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61D21A65-6DF2-45EC-BF43-3050187A4E15}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B353E5DC-9D03-4350-A81F-AAD6EB27D3D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B353E5DC-9D03-4350-A81F-AAD6EB27D3D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B353E5DC-9D03-4350-A81F-AAD6EB27D3D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B353E5DC-9D03-4350-A81F-AAD6EB27D3D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FF8A2F7-26CF-46D2-9BF3-F115CA6D9058}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FF8A2F7-26CF-46D2-9BF3-F115CA6D9058}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FF8A2F7-26CF-46D2-9BF3-F115CA6D9058}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FF8A2F7-26CF-46D2-9BF3-F115CA6D9058}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

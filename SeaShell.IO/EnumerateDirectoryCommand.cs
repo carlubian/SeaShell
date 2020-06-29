@@ -2,7 +2,7 @@
 using SeaShell.Core;
 using SeaShell.Core.Extensibility;
 using SeaShell.Core.Extensibility.DuckTyping;
-using SeaShell.Core.Extensibility.Parameters;
+using static SeaShell.Core.Extensibility.Parameters.ParameterCheckBuilder;
 using SeaShell.Core.Model;
 using System;
 using System.Collections.Generic;
@@ -30,21 +30,19 @@ namespace SeaShell.IO
             var dirName = Environment.CurrentDirectory;
 
             // Default parameter has a value
-            if (Parameters.SeeIf(parameters).HasValue("_default").HasNone("Target").Eval())
+            if (And(ParamHasValue("_default"), ParamNotExists("Target")).Eval(parameters))
             {
-                dirName = parameters.Single(p => p.Key == "_default").Value;
+                parameters.TryGetValue("_default", out dirName);
             }
 
             // Target parameter has a value
-            if (Parameters.SeeIf(parameters).IsEmpty("_default").HasParam("Target")
-                .HasValue("Target").Eval())
+            if (And(ParamIsEmpty("_default"), ParamExists("Target"), ParamHasValue("Target")).Eval(parameters))
             {
-                dirName = parameters.Single(p => p.Key == "Target").Value;
+                parameters.TryGetValue("Target", out dirName);
             }
 
             // Both default and Target parameters have value
-            if (Parameters.SeeIf(parameters).HasValue("_default").HasParam("Target")
-                .HasValue("Target").Eval())
+            if (And(ParamHasValue("_default"), ParamExists("Target"), ParamHasValue("Target")).Eval(parameters))
             {
                 SeaShellErrors.NotifyMutuallyExclusive("_default", "Target");
                 return null;
