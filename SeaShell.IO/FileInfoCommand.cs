@@ -27,49 +27,28 @@ namespace SeaShell.IO
 
         public IEnumerable<dynamic> Invoke(IEnumerable<Parameter> parameters, IEnumerable<dynamic> pipeline)
         {
-            var path = "";
-
-            // Default parameter and Target parameter present
-            if (And(ParamHasValue("_default"), ParamExists("Target"), ParamHasValue("Target")).Eval(parameters))
+            if (Or(And(ParamHasValue("_default"), ParamNotExists("Target")),
+                And(ParamIsEmpty("_default"), ParamExists("Target"), ParamHasValue("Target"))).Eval(parameters))
             {
-                SeaShellErrors.NotifyMutuallyExclusive("_default", "Target");
-                return null;
-            }
+                if (!parameters.TryGetValue("_default", out var path))
+                    parameters.TryGetValue("Target", out path);
 
-            // Target parameter without value
-            if (And(ParamExists("Target"), ParamIsEmpty("Target")).Eval(parameters))
-            {
-                SeaShellErrors.NotifyParamMissingValue("Target");
-                return null;
-            }
-
-            // Default parameter with value
-            if (And(ParamHasValue("_default"), ParamNotExists("Target")).Eval(parameters))
-            {
-                path = parameters.Single(p => p.Key == "_default").Value;
-            }
-
-            // Target parameter with value
-            if (And(ParamIsEmpty("_default"), ParamExists("Target"), ParamHasValue("Target")).Eval(parameters))
-            {
-                parameters.TryGetValue("Target", out path);
-            }
-
-            if (path != "")
-            {
-                if (!File.Exists(path))
-                    ConsoleIO.WriteError($"File {path} doesn't exist.");
-                else
+                if (path != "")
                 {
-                    var file = new FileInfo(path);
-                    Console.Write("File name: ");
-                    ConsoleIO.WriteInfo(file.Name);
-                    Console.Write("Extension: ");
-                    ConsoleIO.WriteInfo(file.Extension);
-                    Console.Write("Length: ");
-                    ConsoleIO.WriteInfo(file.Length.ToString());
-                    Console.Write("Attributes: ");
-                    ConsoleIO.WriteInfo(file.Attributes.ToString());
+                    if (!File.Exists(path))
+                        ConsoleIO.WriteError($"File {path} doesn't exist.");
+                    else
+                    {
+                        var file = new FileInfo(path);
+                        Console.Write("File name: ");
+                        ConsoleIO.WriteInfo(file.Name);
+                        Console.Write("Extension: ");
+                        ConsoleIO.WriteInfo(file.Extension);
+                        Console.Write("Length: ");
+                        ConsoleIO.WriteInfo(file.Length.ToString());
+                        Console.Write("Attributes: ");
+                        ConsoleIO.WriteInfo(file.Attributes.ToString());
+                    }
                 }
             }
             else
@@ -98,7 +77,7 @@ namespace SeaShell.IO
                 }
             }
 
-            return null;
+            return Enumerable.Empty<dynamic>();
         }
     }
 }

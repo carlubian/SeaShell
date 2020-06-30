@@ -23,6 +23,13 @@ namespace SeaShell.Core.Extensibility.Parameters
         public IParameterCheck ParamIsEmpty(string param) => new AndParamCheckBuilder(@params.Append(new ParamIsEmpty(param)).ToArray());
         public IParameterCheck MutuallyExclusive(params string[] @param) => new AndParamCheckBuilder(@params.Append(new MutuallyExclusive(@param)).ToArray());
 
-        public bool Eval(IEnumerable<Parameter> source) => @params.Any(p => p.Eval(source));
+        public bool Eval(IEnumerable<Parameter> source, bool silent = false)
+        {
+            var result = @params.Any(p => p.Eval(source, true));
+            if (!result)
+                SeaShellErrors.NotifyOrParamError(@params);
+
+            return result;
+        }
     }
 }

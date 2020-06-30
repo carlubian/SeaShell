@@ -29,31 +29,15 @@ namespace SeaShell.IO
             var dirName = Environment.CurrentDirectory;
 
             // Case 1: File in Target param or _default param
+            if (Or(And(ParamHasValue("_default"), ParamNotExists("Target")),
+                And(ParamIsEmpty("_default"), ParamExists("Target"), ParamHasValue("Target"))).Eval(parameters))
             {
-                // Default parameter has a value
-                if (And(ParamHasValue("_default"), ParamNotExists("Target")).Eval(parameters))
-                {
-                    parameters.TryGetValue("_default", out dirName);
-                    DoDeleteFile(dirName);
-                    return null;
-                }
-
-                // Target parameter has a value
-                if (And(ParamIsEmpty("_default"), ParamExists("Target"), ParamHasValue("Target")).Eval(parameters))
-                {
+                if (!parameters.TryGetValue("_default", out dirName))
                     parameters.TryGetValue("Target", out dirName);
-                    DoDeleteFile(dirName);
-                    return null;
-                }
 
-                // Both default and Target parameters have value
-                if (And(ParamHasValue("_default"), ParamExists("Target"), ParamHasValue("Target")).Eval(parameters))
-                {
-                    SeaShellErrors.NotifyMutuallyExclusive("_default", "Target");
-                    return null;
-                }
+                DoDeleteFile(dirName);
             }
-
+            else
             // Case 2: File(s) come from pipeline
             {
                 foreach (var item in pipeline)
@@ -61,7 +45,7 @@ namespace SeaShell.IO
                         DoDeleteFile(loc.URI);
             }
 
-            return null;
+            return Enumerable.Empty<dynamic>();
         }
 
         private void DoDeleteFile(string path)

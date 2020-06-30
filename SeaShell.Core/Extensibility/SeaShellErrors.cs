@@ -1,4 +1,5 @@
 ﻿using DotNet.Misc.Extensions.Linq;
+using SeaShell.Core.Extensibility.Parameters;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -67,6 +68,18 @@ namespace SeaShell.Core.Extensibility
         public static void NotifyInvalidPath(string path)
         {
             ConsoleIO.WriteError($"The path {path} is invalid, nonexistant or unreachable.");
+        }
+
+        public static void NotifyOrParamError(IParameterCheck[] parts)
+        {
+            // TODO check parts and print detailed information
+            ConsoleIO.WriteError($"Parameter verification error.");
+        }
+
+        public static void NotifyAndParamError(IParameterCheck[] parts)
+        {
+            // TODO check parts and print detailed information
+            ConsoleIO.WriteError($"Parameter verification error.");
         }
     }
 }

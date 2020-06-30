@@ -15,14 +15,14 @@ namespace SeaShell.Core.Extensibility.Parameters
             Values = values;
         }
 
-        public bool Eval(IEnumerable<Parameter> source)
+        public bool Eval(IEnumerable<Parameter> source, bool silent = false)
         {
             var intersection = source.Select(p => p.Key.Content)
                 .Intersect(Values);
 
             var result = intersection.Count() <= 1;
 
-            if (!result)
+            if (!result && !silent)
                 SeaShellErrors.NotifyMutuallyExclusive(Values.ToArray());
 
             return result;

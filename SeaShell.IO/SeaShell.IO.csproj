@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="EnumerateDirectoryCommand.cs~RF76bd1a3.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SeaShell.Core\SeaShell.Core.csproj" />
   </ItemGroup>
 

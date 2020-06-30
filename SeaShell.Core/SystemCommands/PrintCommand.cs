@@ -27,49 +27,30 @@ namespace SeaShell.Core.SystemCommands
         {
             var text = "";
 
-            // Default parameter and Text parameter present
-            if (And(ParamHasValue("_default"), ParamExists("Text"), ParamHasValue("Text")).Eval(parameters))
+            if (Or(And(ParamHasValue("_default"), ParamNotExists("Text")),
+                And(ParamIsEmpty("_default"), ParamExists("Text"), ParamHasValue("Text"))).Eval(parameters))
             {
-                SeaShellErrors.NotifyMutuallyExclusive("_default", "Text");
-                return Enumerable.Empty<dynamic>();
-            }
+                if (!parameters.TryGetValue("_default", out text))
+                    parameters.TryGetValue("Text", out text);
 
-            // Text parameter without value
-            if (And(ParamExists("Text"), ParamIsEmpty("Text")).Eval(parameters))
-            {
-                SeaShellErrors.NotifyParamMissingValue("Text");
-                return Enumerable.Empty<dynamic>();
-            }
-
-            // Default parameter with value
-            if (And(ParamHasValue("_default"), ParamNotExists("Text")).Eval(parameters))
-            {
-                parameters.TryGetValue("_default", out text);
-            }
-
-            // Text parameter with value
-            if (And(ParamIsEmpty("_default"), ParamExists("Text"), ParamHasValue("Text")).Eval(parameters))
-            {
-                parameters.TryGetValue("Text", out text);
-            }
-
-            if (text != "")
-            {
-                Console.WriteLine(text);
-            }
-            else
-            {
-                // Get pipeline object
-                if (pipeline is null)
+                if (text != "")
                 {
-                    ConsoleIO.WriteError("Print command called outside a pipeline, or previous command returned empty object.");
-                    return Enumerable.Empty<dynamic>();
+                    Console.WriteLine(text);
                 }
-
-                foreach (var obj in pipeline)
+                else
                 {
-                    if (obj is IPipelinePrintable ipp)
-                        Console.WriteLine(ipp.StringValue);
+                    // Get pipeline object
+                    if (pipeline is null)
+                    {
+                        ConsoleIO.WriteError("Print command called outside a pipeline, or previous command returned empty object.");
+                        return Enumerable.Empty<dynamic>();
+                    }
+
+                    foreach (var obj in pipeline)
+                    {
+                        if (obj is IPipelinePrintable ipp)
+                            Console.WriteLine(ipp.StringValue);
+                    }
                 }
             }
 

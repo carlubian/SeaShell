@@ -31,51 +31,29 @@ namespace SeaShell.IO
         {
             var dirName = Environment.CurrentDirectory;
 
-            // Default parameter has a value
-            if (And(ParamHasValue("_default"), ParamNotExists("Target")).Eval(parameters))
+            if (Or(And(ParamHasValue("_default"), ParamNotExists("Target"), ParamExists("Name"), ParamHasValue("Name")),
+                And(ParamIsEmpty("_default"), ParamExists("Target"), ParamHasValue("Target"), ParamExists("Name"), ParamHasValue("Name"))).Eval(parameters))
             {
-                parameters.TryGetValue("_default", out dirName);
+                if (!parameters.TryGetValue("_default", out dirName))
+                    parameters.TryGetValue("Target", out dirName);
+
+                var fileName = parameters.Single(p => p.Key == "Name").Value;
+
+                if (!Directory.Exists(dirName))
+                    Directory.CreateDirectory(dirName);
+
+                if (File.Exists(Path.Combine(dirName, fileName)))
+                    ConsoleIO.WriteWarning($"File {Path.Combine(dirName, fileName)} already exists.");
+                else
+                    File.Create(Path.Combine(dirName, fileName));
+
+                return new CreateFilePipelineObject
+                {
+                    URI = Path.Combine(dirName, fileName)
+                }.Enumerate();
             }
 
-            // Target parameter has a value
-            if (And(ParamIsEmpty("_default"), ParamExists("Target"), ParamHasValue("Target")).Eval(parameters))
-            {
-                parameters.TryGetValue("Target", out dirName);
-            }
-
-            // Both default and Target parameters have value
-            if (And(ParamHasValue("_default"), ParamExists("Target"), ParamHasValue("Target")).Eval(parameters))
-            {
-                SeaShellErrors.NotifyMutuallyExclusive("_default", "Target");
-                return null;
-            }
-
-            // Name parameter missing or empty
-            if (ParamNotExists("Name").Eval(parameters))
-            {
-                SeaShellErrors.NotifyMissingParam("Name");
-                return Enumerable.Empty<dynamic>();
-            }
-            else if (ParamIsEmpty("Name").Eval(parameters))
-            {
-                SeaShellErrors.NotifyParamMissingValue("Name");
-                return null;
-            }
-
-            var fileName = parameters.Single(p => p.Key == "Name").Value;
-
-            if (!Directory.Exists(dirName))
-                Directory.CreateDirectory(dirName);
-
-            if (File.Exists(Path.Combine(dirName, fileName)))
-                ConsoleIO.WriteWarning($"File {Path.Combine(dirName, fileName)} already exists.");
-            else
-                File.Create(Path.Combine(dirName, fileName));
-
-            return new CreateFilePipelineObject
-            {
-                URI = Path.Combine(dirName, fileName)
-            }.Enumerate();
+            return Enumerable.Empty<dynamic>();
         }
     }
 

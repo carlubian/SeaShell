@@ -15,11 +15,11 @@ namespace SeaShell.Core.Extensibility.Parameters
             Name = name;
         }
 
-        public bool Eval(IEnumerable<Parameter> source)
+        public bool Eval(IEnumerable<Parameter> source, bool silent = false)
         {
             var result = source.FirstOrDefault(p => p.Key.Equals(Name))?.Value != "";
 
-            if (!result)
+            if (!result && !silent)
                 SeaShellErrors.NotifyParamMissingValue(Name);
 
             return result;

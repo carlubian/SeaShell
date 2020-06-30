@@ -27,60 +27,34 @@ namespace SeaShell.Core.SystemCommands
         {
             var cmdName = "";
 
-            // Command name in default parameter
-            if (And(ParamHasValue("_default"), ParamNotExists("Command")).Eval(parameters))
+            if (Or(And(ParamHasValue("_default"), ParamNotExists("Command")), 
+                And(ParamIsEmpty("_default"), ParamExists("Command"), ParamHasValue("Command"))).Eval(parameters))
             {
-                parameters.TryGetValue("_default", out cmdName);
+                if (!parameters.TryGetValue("_default", out cmdName))
+                    parameters.TryGetValue("Command", out cmdName);
+
+                var cmd = Commands.HandlerFor(cmdName);
+
+                // Command doesn't exist
+                if (cmd is null)
+                {
+                    ConsoleIO.WriteError($"The command {cmdName} is not recognized.");
+                    return Enumerable.Empty<dynamic>();
+                }
+
+                var cmdHelp = cmd.Help;
+
+                Console.WriteLine($"{cmdName.Pastel("#F0F5FF")}: {cmdHelp.Description}".Pastel("#2DA8CA"));
+                Console.WriteLine($"Usage: {cmdHelp.Example.Pastel("#F0F5FF")}".Pastel("#2DA8CA"));
+                if (cmdHelp.Parameters != null)
+                {
+                    Console.WriteLine("Parameter information:".Pastel("#2DA8CA"));
+                    foreach (var key in cmdHelp.Parameters.Keys)
+                        Console.WriteLine($"  {key}: {cmdHelp.Parameters[key].Pastel("#F0F5FF")}".Pastel("#2DA8CA"));
+                }
+                else
+                    Console.WriteLine("This command has no parameters.".Pastel("#2DA8CA"));
             }
-
-            // Command name in /Command parameter
-            if (And(ParamIsEmpty("_default"), ParamExists("Command"), ParamHasValue("Command")).Eval(parameters))
-            {
-                parameters.TryGetValue("Command", out cmdName);
-            }
-
-            // No default value and Command parameter missing
-            if (And(ParamIsEmpty("_default"), ParamNotExists("Command")).Eval(parameters))
-            {
-                SeaShellErrors.NotifyMissingParam("Command");
-                return Enumerable.Empty<dynamic>();
-            }
-
-            // Command parameter is empty
-            if (And(ParamIsEmpty("_default"), ParamExists("Command"), ParamIsEmpty("Command")).Eval(parameters))
-            {
-                SeaShellErrors.NotifyParamMissingValue("Command");
-                return Enumerable.Empty<dynamic>();
-            }
-
-            // Default parameter has value and Command parameter present
-            if (And(ParamHasValue("_default"), ParamExists("Command"), ParamHasValue("Command")).Eval(parameters))
-            {
-                SeaShellErrors.NotifyMutuallyExclusive("_default", "Command");
-                return Enumerable.Empty<dynamic>();
-            }
-
-            var cmd = Commands.HandlerFor(cmdName);
-
-            // Command doesn't exist
-            if (cmd is null)
-            {
-                ConsoleIO.WriteError($"The command {cmdName} is not recognized.");
-                return Enumerable.Empty<dynamic>();
-            }
-
-            var cmdHelp = cmd.Help;
-
-            Console.WriteLine($"{cmdName.Pastel("#F0F5FF")}: {cmdHelp.Description}".Pastel("#2DA8CA"));
-            Console.WriteLine($"Usage: {cmdHelp.Example.Pastel("#F0F5FF")}".Pastel("#2DA8CA"));
-            if (cmdHelp.Parameters != null)
-            {
-                Console.WriteLine("Parameter information:".Pastel("#2DA8CA"));
-                foreach (var key in cmdHelp.Parameters.Keys)
-                    Console.WriteLine($"  {key}: {cmdHelp.Parameters[key].Pastel("#F0F5FF")}".Pastel("#2DA8CA"));
-            }
-            else
-                Console.WriteLine("This command has no parameters.".Pastel("#2DA8CA"));
 
             return Enumerable.Empty<dynamic>();
         }

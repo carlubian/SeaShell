@@ -29,60 +29,50 @@ namespace SeaShell.IO
         {
             var dirName = Environment.CurrentDirectory;
 
-            // Default parameter has a value
-            if (And(ParamHasValue("_default"), ParamNotExists("Target")).Eval(parameters))
+            if (Or(And(ParamHasValue("_default"), ParamNotExists("Target")),
+                And(ParamIsEmpty("_default"), ParamExists("Target"), ParamHasValue("Target"))).Eval(parameters))
             {
-                parameters.TryGetValue("_default", out dirName);
-            }
+                if (!parameters.TryGetValue("_default", out dirName))
+                    parameters.TryGetValue("Target", out dirName);
 
-            // Target parameter has a value
-            if (And(ParamIsEmpty("_default"), ParamExists("Target"), ParamHasValue("Target")).Eval(parameters))
-            {
-                parameters.TryGetValue("Target", out dirName);
-            }
-
-            // Both default and Target parameters have value
-            if (And(ParamHasValue("_default"), ParamExists("Target"), ParamHasValue("Target")).Eval(parameters))
-            {
-                SeaShellErrors.NotifyMutuallyExclusive("_default", "Target");
-                return null;
-            }
-
-            if (!Directory.Exists(dirName))
-            {
-                SeaShellErrors.NotifyInvalidPath(dirName);
-                return null;
-            }
-
-            var pipeRet = new List<EnumerateDirectoryPipelineObject>();
-
-            ConsoleIO.WriteInfo($"Enumerating directory {dirName.Pastel("#F0F5FF")}:");
-            ConsoleIO.WriteInfo("  Length    Name");
-
-            foreach (var dir in Directory.EnumerateDirectories(dirName))
-            {
-                Console.WriteLine($"            {new DirectoryInfo(dir).Name}");
-                pipeRet.Add(new EnumerateDirectoryPipelineObject()
+                if (!Directory.Exists(dirName))
                 {
-                    StringValue = new DirectoryInfo(dir).Name
-                });
-            }
-            foreach (var file in Directory.EnumerateFiles(dirName))
-            {
-                var length = (int)new FileInfo(file).Length;
-                Console.Write(length.ToString());
+                    SeaShellErrors.NotifyInvalidPath(dirName);
+                    return null;
+                }
 
-                for (int i = length.ToString().Length; i < 12; i++)
-                    Console.Write(" ");
+                var pipeRet = new List<EnumerateDirectoryPipelineObject>();
 
-                Console.WriteLine(new FileInfo(file).Name);
-                pipeRet.Add(new EnumerateDirectoryPipelineObject()
+                ConsoleIO.WriteInfo($"Enumerating directory {dirName.Pastel("#F0F5FF")}:");
+                ConsoleIO.WriteInfo("  Length    Name");
+
+                foreach (var dir in Directory.EnumerateDirectories(dirName))
                 {
-                    StringValue = new FileInfo(file).Name
-                });
+                    Console.WriteLine($"            {new DirectoryInfo(dir).Name}");
+                    pipeRet.Add(new EnumerateDirectoryPipelineObject()
+                    {
+                        StringValue = new DirectoryInfo(dir).Name
+                    });
+                }
+                foreach (var file in Directory.EnumerateFiles(dirName))
+                {
+                    var length = (int)new FileInfo(file).Length;
+                    Console.Write(length.ToString());
+
+                    for (int i = length.ToString().Length; i < 12; i++)
+                        Console.Write(" ");
+
+                    Console.WriteLine(new FileInfo(file).Name);
+                    pipeRet.Add(new EnumerateDirectoryPipelineObject()
+                    {
+                        StringValue = new FileInfo(file).Name
+                    });
+                }
+
+                return pipeRet;
             }
 
-            return pipeRet;
+            return Enumerable.Empty<dynamic>();
         }
     }
 
