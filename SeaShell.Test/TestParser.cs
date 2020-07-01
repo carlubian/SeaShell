@@ -63,6 +63,16 @@ namespace SeaShell.Test
             cmd = "attr = value";
             TestPositive();
 
+            cmd = "badly/formatted/uri";
+            // Only parses the first part
+            SeaShellParser.anyText.Parse(cmd).Should().NotBeNull()
+                    .And.Match(i => i.ToString() == "badly");
+
+            cmd = "\"properly/formatted/uri\"";
+            // Double quotes are excluded from parsing
+            SeaShellParser.anyText.Parse(cmd).Should().NotBeNull()
+                    .And.Match(i => i.ToString() == "properly/formatted/uri");
+
             void TestPositive()
             {
                 SeaShellParser.anyText.Parse(cmd).Should().NotBeNull()
@@ -126,6 +136,14 @@ namespace SeaShell.Test
             @default = ".";
             @params = "/Ignore-Subdirectories";
             TestPositive();
+
+            cmd = "Fetch-Url";
+            @params = "/Target \"www.contoso.com/foo/bar.html\"";
+            // Double quotes are excluded from parsing
+            SeaShellParser.command.Parse($"{cmd} {@params}").Should().NotBeNull()
+                    .And.Match(c => (c as Command).Name == cmd)
+                    .And.Match(c => (c as Command).Parameters.First().Value == "www.contoso.com/foo/bar.html");
+
 
             void TestPositive()
             {

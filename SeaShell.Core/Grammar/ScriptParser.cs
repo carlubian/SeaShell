@@ -31,7 +31,11 @@ namespace SeaShell.Core.Grammar
         /// or the pipeline symbol.
         /// </summary>
         internal static Parser<string> anyText = from leading in Parse.WhiteSpace.Many()
-                                                 from name in Parse.CharExcept("/>").Many().Text()
+                                                 from name in Parse.CharExcept("\"/>").Many().Text().Or(
+                                                     from prefix in Parse.Char('"')
+                                                     from content in Parse.CharExcept('"').Many().Text()
+                                                     from suffix in Parse.Char('"')
+                                                     select content)
                                                  from trailing in Parse.WhiteSpace.Many()
                                                  select name.Trim();
 
