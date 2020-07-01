@@ -17,9 +17,11 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
-    - name: Build with dotnet
+    - name: Build SeaShell.Core
       run: dotnet build SeaShell.Core/SeaShell.Core.csproj --configuration Release
+    - name: Build SeaShell.IO
       run: dotnet build SeaShell.IO/SeaShell.IO.csproj --configuration Release
+    - name: Build SeaShell
       run: dotnet build SeaShell/SeaShell.csproj --configuration Release
     - name: Test with dotnet
       run: dotnet test SeaShell.Test/SeaShell.Test.csproj
