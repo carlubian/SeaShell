@@ -21,6 +21,10 @@ jobs:
       run: dotnet build SeaShell.Core/SeaShell.Core.csproj --configuration Release
     - name: Build SeaShell.IO
       run: dotnet build SeaShell.IO/SeaShell.IO.csproj --configuration Release
+    - name: Build SeaShell.Net
+      run: dotnet build SeaShell.Net/SeaShell.Net.csproj --configuration Release
+    - name: Build SeaShell.Reflection
+      run: dotnet build SeaShell.Reflection/SeaShell.Reflection.csproj --configuration Release
     - name: Build SeaShell
       run: dotnet build SeaShell/SeaShell.csproj --configuration Release
     - name: Test with dotnet

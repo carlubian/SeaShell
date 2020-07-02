@@ -33,24 +33,21 @@ namespace SeaShell.Core.SystemCommands
                 if (!parameters.TryGetValue("_default", out text))
                     parameters.TryGetValue("Text", out text);
 
-                if (text != "")
+                Console.WriteLine(text);
+            }
+            else
+            {
+                // Get pipeline object
+                if (pipeline is null)
                 {
-                    Console.WriteLine(text);
+                    ConsoleIO.WriteError("Print command called outside a pipeline, or previous command returned empty object.");
+                    return Enumerable.Empty<dynamic>();
                 }
-                else
-                {
-                    // Get pipeline object
-                    if (pipeline is null)
-                    {
-                        ConsoleIO.WriteError("Print command called outside a pipeline, or previous command returned empty object.");
-                        return Enumerable.Empty<dynamic>();
-                    }
 
-                    foreach (var obj in pipeline)
-                    {
-                        if (obj is IPipelinePrintable ipp)
-                            Console.WriteLine(ipp.StringValue);
-                    }
+                foreach (var obj in pipeline)
+                {
+                    if (obj is IPipelinePrintable ipp)
+                        Console.WriteLine(ipp.StringValue);
                 }
             }
 

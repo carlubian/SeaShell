@@ -4,12 +4,12 @@ Prototype for a command line interpreter build on .NET Core.
 
 ## Current status
 
-Very early
+Barely functional
 
-## Why?
+## How to use
 
-Why not? Also, coronavirus-induced quarantine.
+This section is early in development. At some point there will be an actual usage guide.
 
-## Doesn't Powershell Core do the same thing?
-
-Yes, and probably better.
+* Run the output from the SeaShell project.
+    * Todo: Integration with Windows Terminal.
+* Add the prebuilt libraries from /libraries
