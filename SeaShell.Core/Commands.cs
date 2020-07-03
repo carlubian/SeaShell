@@ -25,7 +25,6 @@ namespace SeaShell.Core
             AllCommands.Add("Print", new PrintCommand());
             AllCommands.Add("Change-Directory", new ChangeDirectoryCommand());
             AllCommands.Add("Run-Script", new RunScriptCommand());
-            AllCommands.Add("Otter", new OtterCommand());
             AllCommands.Add("Environment", new EnvironmentCommand());
         }
 

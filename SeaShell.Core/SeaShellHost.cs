@@ -8,11 +8,12 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 
 [assembly:InternalsVisibleTo("SeaShell.Test")]
+[assembly: InternalsVisibleTo("SeaShell.Otter")]
 namespace SeaShell.Core
 {
     public static class SeaShellHost
     {
-        internal static readonly string Version = "0.4.0.080620";
+        internal static readonly string Version = "0.5.0.030720";
         internal static bool Continue = true;
         internal static string Env = "_system";
         internal static string EnvPath = "";
@@ -29,27 +30,32 @@ namespace SeaShell.Core
             while (Continue)
             {
                 ConsoleIO.ShowPrompt();
-                var pipeline = SeaShellParser.pipeline.Parse(Console.ReadLine());
-
-                IEnumerable<dynamic> lastReturn = Enumerable.Empty<dynamic>();
-                foreach (var command in pipeline.Commands)
-                {
-                    if (SeaShellErrors.CheckLowercaseCommands(command.Name))
-                        continue;
-                    var handler = Commands.HandlerFor(command.Name);
-                    if (handler is null)
-                    {
-                        SeaShellErrors.NotifyUnknownCommand(command.Name);
-                        break;
-                    }
-                    if (!lastReturn.Any())
-                        command.PipelineParameter = lastReturn;
-                    lastReturn = handler.Invoke(command.Parameters, lastReturn);
-                }
+                ParseAndRun(Console.ReadLine());
             }
 
             Environment.CurrentDirectory = oldDir;
             ConsoleIO.Restore();
+        }
+
+        public static void ParseAndRun(string text)
+        {
+            var pipeline = SeaShellParser.pipeline.Parse(text);
+
+            IEnumerable<dynamic> lastReturn = Enumerable.Empty<dynamic>();
+            foreach (var command in pipeline.Commands)
+            {
+                if (SeaShellErrors.CheckLowercaseCommands(command.Name))
+                    continue;
+                var handler = Commands.HandlerFor(command.Name);
+                if (handler is null)
+                {
+                    SeaShellErrors.NotifyUnknownCommand(command.Name);
+                    break;
+                }
+                if (!lastReturn.Any())
+                    command.PipelineParameter = lastReturn;
+                lastReturn = handler.Invoke(command.Parameters, lastReturn);
+            }
         }
 
         private static void InitializeFolders()

@@ -23,6 +23,8 @@ jobs:
       run: dotnet build SeaShell.IO/SeaShell.IO.csproj --configuration Release
     - name: Build SeaShell.Net
       run: dotnet build SeaShell.Net/SeaShell.Net.csproj --configuration Release
+    - name: Build SeaShell.Otter
+      run: dotnet build SeaShell.Otter/SeaShell.Otter.csproj --configuration Release
     - name: Build SeaShell.Reflection
       run: dotnet build SeaShell.Reflection/SeaShell.Reflection.csproj --configuration Release
     - name: Build SeaShell

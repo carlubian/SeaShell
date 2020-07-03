@@ -1,16 +1,16 @@
 ﻿using ConfigAdapter.Ini;
-using Pastel;
+using SeaShell.Core;
 using SeaShell.Core.Extensibility;
 using static SeaShell.Core.Extensibility.Parameters.ParameterCheckBuilder;
-using SeaShell.Core.Libraries;
 using SeaShell.Core.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
+using SeaShell.Core.Libraries;
+using Pastel;
 
-namespace SeaShell.Core.SystemCommands
+namespace SeaShell.Otter
 {
     public class OtterCommand : ISeaShellCommand
     {
@@ -107,16 +107,21 @@ namespace SeaShell.Core.SystemCommands
                 // Remove
                 if (parameters.TryGetValue("Remove", out var RemoveValue))
                 {
-                    var library = RemoveValue;
-                    if (!Commands.CommandsPerLibrary.ContainsKey(library) &&
-                        !Commands.LocalCommandsPerLibrary.ContainsKey(library))
+                    if (RemoveValue is "Otter")
                     {
-                        ConsoleIO.WriteWarning($"No library named {library} is installed.");
+                        ConsoleIO.WriteError("Otter is an internal package and cannot be removed.");
                         return Enumerable.Empty<dynamic>();
                     }
 
-                    LibraryManager.Remove(library);
-                    ConsoleIO.WriteInfo($"Removed library {library}");
+                    if (!Commands.CommandsPerLibrary.ContainsKey(RemoveValue) &&
+                        !Commands.LocalCommandsPerLibrary.ContainsKey(RemoveValue))
+                    {
+                        ConsoleIO.WriteWarning($"No library named {RemoveValue} is installed.");
+                        return Enumerable.Empty<dynamic>();
+                    }
+
+                    LibraryManager.Remove(RemoveValue);
+                    ConsoleIO.WriteInfo($"Removed library {RemoveValue}");
                     return Enumerable.Empty<dynamic>();
                 }
 
@@ -138,8 +143,6 @@ namespace SeaShell.Core.SystemCommands
                 }
             }
 
-            // More than one parameter present
-            SeaShellErrors.NotifyMutuallyExclusive("Pack", "Unpack", "Install", "List", "Remove", "Create");
             return Enumerable.Empty<dynamic>();
         }
     }
