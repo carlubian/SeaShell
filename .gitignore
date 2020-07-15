@@ -1,5 +1,10 @@
 .vs
+.vscode
 TestResults
 */bin
 */obj
 MareNostrum.TimeTracker
+installer/Core
+installer/Libraries
+installer/Otter
+installer/*.exe

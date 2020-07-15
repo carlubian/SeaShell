@@ -1,0 +1,3 @@
+SeaShell is currently in beta stages.
+
+By using it, you aknowledge that it could fail, cause unprovoked explosions, or open a tear in the space-time continuum.
