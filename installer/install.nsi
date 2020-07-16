@@ -3,11 +3,11 @@
 !include NTProfiles.nsh
 
 # Global installer configuration --------------------------------------------------------------------------------------
-!define APPNAME "SeaShell Beta"
+!define APPNAME "SeaShell"
 !define COMPANYNAME "carlubian"
 !define HELPURL "https://www.github.com/carlubian/SeaShell"
 BrandingText "SeaShell Installer"
-!define INSTALLSIZE 1045
+!define INSTALLSIZE 716
 !define VERSIONMAJOR 0
 !define VERSIONMINOR 5
 !define VERSIONPATCH 0
@@ -31,10 +31,12 @@ OutFile "SeaShell-0.5.0.exe"
 Var StartMenuFolder
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
 !insertmacro MUI_PAGE_INSTFILES
+!define MUI_FINISHPAGE_NOAUTOCLOSE
 !insertmacro MUI_PAGE_FINISH
 
 !insertmacro MUI_UNPAGE_WELCOME
 !insertmacro MUI_UNPAGE_CONFIRM
+#!insertmacro MUI_UNPAGE_COMPONENTS
 !insertmacro MUI_UNPAGE_INSTFILES
 
 # Languages -----------------------------------------------------------------------------------------------------------
@@ -105,9 +107,9 @@ Function InstallOtterOnProfile
         Pop $0
  
     # Install Otter for current user profile
-        SetOutPath "$0\.SeaShell Beta\Libraries\SeaShell.Otter"
+        SetOutPath "$0\.SeaShell\Libraries\SeaShell.Otter"
         File "Otter\Manifest.ini"
-        SetOutPath "$0\.SeaShell Beta\Libraries\SeaShell.Otter\Assemblies"
+        SetOutPath "$0\.SeaShell\Libraries\SeaShell.Otter\Assemblies"
         File "Otter\DotNetZip.dll"
         File "Otter\SeaShell.Otter.dll"
  
@@ -127,23 +129,25 @@ Section "Otter" SectionOtter
 SectionEnd
 
 # Libraries section ---------------------------------------------------------------------------------------------------
-Section "Libraries" SectionLibraries
-
-    # TODO
-
-SectionEnd
-
-# Unistall ------------------------------------------------------------------------------------------------------------
-Function Un.installOtterOnProfile 
+Function InstallLibrariesOnProfile 
     ## Get the profile path from the stack
         Pop $0
  
-    # Uninstall Otter for current user profile
-        Delete "$0\.SeaShell Beta\Libraries\SeaShell.Otter\Manifest.ini"
-        Delete "$0\.SeaShell Beta\Libraries\SeaShell.Otter\Assemblies\DotNetZip.dll"
-        Delete "$0\.SeaShell Beta\Libraries\SeaShell.Otter\Assemblies\SeaShell.Otter.dll"
-        RmDir "$0\.SeaShell Beta\Libraries\SeaShell.Otter\Assemblies"
-        RmDir "$0\.SeaShell Beta\Libraries\SeaShell.Otter"
+    # Install common libraries for current user profile
+        SetOutPath "$0\.SeaShell\Libraries\SeaShell.IO"
+        File "Libraries\SeaShell.IO\Manifest.ini"
+        SetOutPath "$0\.SeaShell\Libraries\SeaShell.IO\Assemblies"
+        File "Libraries\SeaShell.IO\SeaShell.IO.dll"
+
+        SetOutPath "$0\.SeaShell\Libraries\SeaShell.Net"
+        File "Libraries\SeaShell.Net\Manifest.ini"
+        SetOutPath "$0\.SeaShell\Libraries\SeaShell.Net\Assemblies"
+        File "Libraries\SeaShell.Net\SeaShell.Net.dll"
+
+        SetOutPath "$0\.SeaShell\Libraries\SeaShell.Reflection"
+        File "Libraries\SeaShell.Reflection\Manifest.ini"
+        SetOutPath "$0\.SeaShell\Libraries\SeaShell.Reflection\Assemblies"
+        File "Libraries\SeaShell.Reflection\SeaShell.Reflection.dll"
  
     ## Continue Enumeration
         Push ""
@@ -153,7 +157,15 @@ Function Un.installOtterOnProfile
         Push "~" # Any value other than an empty string will abort the enumeration
 FunctionEnd
 
-Section "Uninstall"
+Section "Libraries" SectionLibraries
+
+    !define NTProfilePaths::IgnoreSystem
+    ${EnumProfilePaths} InstallLibrariesOnProfile
+
+SectionEnd
+
+# Unistall ------------------------------------------------------------------------------------------------------------
+Section "Uninstall" SectionUninstall
 
     !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
  
@@ -176,9 +188,6 @@ Section "Uninstall"
     #Delete $INSTDIR\System.Security.Permissions.dll
 	Delete $INSTDIR\icon-SeaShell.ico
 	Delete $INSTDIR\Uninstall.exe
-
-    !define NTProfilePaths::IgnoreSystem
-    ${EnumProfilePaths} Un.installOtterOnProfile
  
 	RmDir $INSTDIR
  
@@ -190,12 +199,15 @@ SectionEnd
 LangString DESC_SectionCore ${LANG_ENGLISH} "Required components for SeaShell."
 LangString DESC_SectionCore ${LANG_SPANISH} "Componentes necesarios para SeaShell."
 LangString DESC_SectionOtter ${LANG_ENGLISH} "Otter is the package manager for SeaShell. Without it, you will be unable to install or remove SeaShell libraries."
-LangString DESC_SectionOtter ${LANG_SPANISH} "Otter es el administrador de paquetes de SeaShell. Es necesario para gestionar paquetes adicionales de SeaShell.."
+LangString DESC_SectionOtter ${LANG_SPANISH} "Otter es el administrador de paquetes de SeaShell. Es necesario para gestionar paquetes adicionales de SeaShell."
 LangString DESC_SectionLibraries ${LANG_ENGLISH} "Common libraries like SeaShell.IO, SeaShell.Net or SeaShell.Reflection."
 LangString DESC_SectionLibraries ${LANG_SPANISH} "Paquetes comunes como SeaShell.IO, SeaShell.Net o SeaShell.Reflection."
+LangString DESC_SectionUninstall ${LANG_ENGLISH} "Uninstall the core SeaShell interpreter."
+LangString DESC_SectionUninstall ${LANG_SPANISH} "Desinstalar el ejecutable principal de SeaShell."
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${SectionCore} $(DESC_SectionCore)
     !insertmacro MUI_DESCRIPTION_TEXT ${SectionOtter} $(DESC_SectionOtter)
     !insertmacro MUI_DESCRIPTION_TEXT ${SectionLibraries} $(DESC_SectionLibraries)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SectionUninstall} $(DESC_SectionUninstall)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
