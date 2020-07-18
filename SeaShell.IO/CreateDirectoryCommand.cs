@@ -29,13 +29,11 @@ namespace SeaShell.IO
 
         public IEnumerable<dynamic> Invoke(IEnumerable<Parameter> parameters, IEnumerable<dynamic> pipeline)
         {
-            var dirName = Environment.CurrentDirectory;
-
-            if (Or(And(ParamHasValue("_default"), ParamNotExists("Target"), ParamExists("Name"), ParamHasValue("Name")),
-                And(ParamIsEmpty("_default"), ParamExists("Target"), ParamHasValue("Target"), ParamExists("Name"), ParamHasValue("Name"))).Eval(parameters))
+            if (ParamHasValue("Name").Eval(parameters))
             {
-                if (!parameters.TryGetValue("_default", out dirName))
-                    parameters.TryGetValue("Target", out dirName);
+                if (!parameters.TryGetValue("_default", out var dirName))
+                    if (!parameters.TryGetValue("Target", out dirName))
+                        dirName = Environment.CurrentDirectory;
 
                 var NewPath = Path.Combine(dirName, parameters.Single(p => p.Key == "Name").Value);
 

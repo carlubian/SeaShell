@@ -25,30 +25,22 @@ namespace SeaShell.Core.SystemCommands
 
         public IEnumerable<dynamic> Invoke(IEnumerable<Parameter> parameters, IEnumerable<dynamic> pipeline)
         {
-            var text = "";
-
-            if (Or(And(ParamHasValue("_default"), ParamNotExists("Text")),
-                And(ParamIsEmpty("_default"), ParamExists("Text"), ParamHasValue("Text"))).Eval(parameters))
+            if(pipeline.Any())
             {
-                if (!parameters.TryGetValue("_default", out text))
-                    parameters.TryGetValue("Text", out text);
-
-                Console.WriteLine(text);
+                foreach (var element in pipeline)
+                    if (element is IPipelinePrintable ipp)
+                        Console.WriteLine(ipp.StringValue);
             }
             else
             {
-                // Get pipeline object
-                if (pipeline is null)
-                {
-                    ConsoleIO.WriteError("Print command called outside a pipeline, or previous command returned empty object.");
-                    return Enumerable.Empty<dynamic>();
-                }
+                if (!parameters.TryGetValue("_default", out var text))
+                    if (!parameters.TryGetValue("Text", out text))
+                    {
+                        ConsoleIO.WriteError("Print command called outside a pipeline, or previous command returned empty object.");
+                        return Enumerable.Empty<dynamic>();
+                    }
 
-                foreach (var obj in pipeline)
-                {
-                    if (obj is IPipelinePrintable ipp)
-                        Console.WriteLine(ipp.StringValue);
-                }
+                Console.WriteLine(text);
             }
 
             return Enumerable.Empty<dynamic>();

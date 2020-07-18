@@ -6,12 +6,11 @@
 !define APPNAME "SeaShell"
 !define COMPANYNAME "carlubian"
 !define HELPURL "https://www.github.com/carlubian/SeaShell"
-BrandingText "SeaShell Installer"
-!define INSTALLSIZE 716
+!define INSTALLSIZE 785
 !define VERSIONMAJOR 0
 !define VERSIONMINOR 5
-!define VERSIONPATCH 0
-!define VERSIONBUILD 030720
+!define VERSIONPATCH 1
+!define VERSIONBUILD 180720
 
 RequestExecutionLevel admin
 InstallDir "$PROGRAMFILES\${APPNAME}"
@@ -21,7 +20,8 @@ Name "${APPNAME}"
 !define MUI_ICON "icon-SeaShell.ico"
 !define MUI_BGCOLOR "283038"
 !define MUI_TEXTCOLOR "F0F5FF"
-OutFile "SeaShell-0.5.0.exe"
+OutFile "SeaShell-${VERSIONMAJOR}.${VERSIONMINOR}.${VERSIONPATCH}.${VERSIONBUILD}.exe"
+BrandingText "SeaShell ${VERSIONMAJOR}.${VERSIONMINOR}.${VERSIONPATCH}.${VERSIONBUILD}"
 
 # Page definition -----------------------------------------------------------------------------------------------------
 !insertmacro MUI_PAGE_WELCOME
@@ -112,6 +112,7 @@ Function InstallOtterOnProfile
         SetOutPath "$0\.SeaShell\Libraries\SeaShell.Otter\Assemblies"
         File "Otter\DotNetZip.dll"
         File "Otter\SeaShell.Otter.dll"
+        File "Otter\System.Security.Permissions.dll"
  
     ## Continue Enumeration
         Push ""
@@ -138,6 +139,7 @@ Function InstallLibrariesOnProfile
         File "Libraries\SeaShell.IO\Manifest.ini"
         SetOutPath "$0\.SeaShell\Libraries\SeaShell.IO\Assemblies"
         File "Libraries\SeaShell.IO\SeaShell.IO.dll"
+        File "Libraries\SeaShell.IO\DotNet.Misc.Extensions.dll"
 
         SetOutPath "$0\.SeaShell\Libraries\SeaShell.Net"
         File "Libraries\SeaShell.Net\Manifest.ini"

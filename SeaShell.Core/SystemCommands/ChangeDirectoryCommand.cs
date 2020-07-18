@@ -26,21 +26,31 @@ namespace SeaShell.Core.SystemCommands
 
         public IEnumerable<dynamic> Invoke(IEnumerable<Parameter> parameters, IEnumerable<dynamic> pipeline)
         {
-            if (And(Or(ParamHasValue("_default"), ParamHasValue("Target")), 
-                MutuallyExclusive("_default", "Target")).Eval(parameters))
+            if (pipeline.Any())
             {
-                if (!parameters.TryGetValue("_default", out var newPath))
-                    parameters.TryGetValue("Target", out newPath);
-
-                Environment.CurrentDirectory = newPath;
-
-                return new ChangeDirectoryPipelineObject
+                foreach (var element in pipeline)
+                    if (element is IPipelineLocatable ipl)
+                    {
+                        Environment.CurrentDirectory = ipl.URI;
+                        break;
+                    }
+            }
+            else
+            {
+                if (And(Or(ParamHasValue("_default"), ParamHasValue("Target")),
+                MutuallyExclusive("_default", "Target")).Eval(parameters))
                 {
-                    URI = Environment.CurrentDirectory
-                }.Enumerate();
+                    if (!parameters.TryGetValue("_default", out var newPath))
+                        parameters.TryGetValue("Target", out newPath);
+
+                    Environment.CurrentDirectory = newPath;
+                }
             }
 
-            return Enumerable.Empty<dynamic>();
+            return new ChangeDirectoryPipelineObject
+            {
+                URI = Environment.CurrentDirectory
+            }.Enumerate();
         }
     }
 
