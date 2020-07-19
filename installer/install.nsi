@@ -6,11 +6,11 @@
 !define APPNAME "SeaShell"
 !define COMPANYNAME "carlubian"
 !define HELPURL "https://www.github.com/carlubian/SeaShell"
-!define INSTALLSIZE 785
+!define INSTALLSIZE 783
 !define VERSIONMAJOR 0
 !define VERSIONMINOR 5
-!define VERSIONPATCH 1
-!define VERSIONBUILD 180720
+!define VERSIONPATCH 2
+!define VERSIONBUILD 190720
 
 RequestExecutionLevel admin
 InstallDir "$PROGRAMFILES\${APPNAME}"

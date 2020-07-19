@@ -27,6 +27,11 @@ namespace SeaShell.Core.Extensibility.Parameters
             }
             else
             {
+                if (maybeParam.Value is "")
+                {
+                    value = null;
+                    return false;
+                }
                 value = maybeParam.Value;
                 return true;
             }

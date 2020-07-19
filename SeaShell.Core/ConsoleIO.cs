@@ -20,7 +20,11 @@ namespace SeaShell.Core
 
         internal static void ShowPrompt()
         {
-            Console.Write($"SSS {Environment.CurrentDirectory}>".Pastel("#F0F5FF"));
+            var env = "SSS";
+            if (SeaShellHost.Env != "_system")
+                env = $"[{SeaShellHost.Env}]";
+
+            Console.Write($"{env} {Environment.CurrentDirectory}>".Pastel("#F0F5FF"));
             Console.Write(" ".Pastel("#DCE1EB"));
         }
 

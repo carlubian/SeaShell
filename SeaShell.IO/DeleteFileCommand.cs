@@ -26,23 +26,22 @@ namespace SeaShell.IO
 
         public IEnumerable<dynamic> Invoke(IEnumerable<Parameter> parameters, IEnumerable<dynamic> pipeline)
         {
-            var dirName = Environment.CurrentDirectory;
-
-            // Case 1: File in Target param or _default param
-            if (Or(And(ParamHasValue("_default"), ParamNotExists("Target")),
-                And(ParamIsEmpty("_default"), ParamExists("Target"), ParamHasValue("Target"))).Eval(parameters))
-            {
-                if (!parameters.TryGetValue("_default", out dirName))
-                    parameters.TryGetValue("Target", out dirName);
-
-                DoDeleteFile(dirName);
-            }
-            else
-            // Case 2: File(s) come from pipeline
+            if (pipeline.Any())
             {
                 foreach (var item in pipeline)
                     if (item is IPipelineLocatable loc)
                         DoDeleteFile(loc.URI);
+            }
+            else
+            {
+                if (Or(And(ParamHasValue("_default"), ParamNotExists("Target")),
+                And(ParamIsEmpty("_default"), ParamExists("Target"), ParamHasValue("Target"))).Eval(parameters))
+                {
+                    if (!parameters.TryGetValue("_default", out var dirName))
+                        parameters.TryGetValue("Target", out dirName);
+
+                    DoDeleteFile(dirName);
+                }
             }
 
             return Enumerable.Empty<dynamic>();
