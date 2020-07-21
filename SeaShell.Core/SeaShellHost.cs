@@ -9,14 +9,17 @@ using System.Runtime.CompilerServices;
 
 [assembly:InternalsVisibleTo("SeaShell.Test")]
 [assembly: InternalsVisibleTo("SeaShell.Otter")]
+[assembly: InternalsVisibleTo("SeaShell.Reflection")]
 namespace SeaShell.Core
 {
     public static class SeaShellHost
     {
-        internal static readonly string Version = "0.5.2.190720";
+        internal static readonly string Version = "0.6.0.210720";
         internal static bool Continue = true;
         internal static string Env = "_system";
         internal static string EnvPath = "";
+
+        internal static IDictionary<string, string> Variables = new LenientDictionary<string, string>();
 
         public static void Start()
         {

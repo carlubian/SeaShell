@@ -6,11 +6,11 @@
 !define APPNAME "SeaShell"
 !define COMPANYNAME "carlubian"
 !define HELPURL "https://www.github.com/carlubian/SeaShell"
-!define INSTALLSIZE 783
+!define INSTALLSIZE 791
 !define VERSIONMAJOR 0
-!define VERSIONMINOR 5
-!define VERSIONPATCH 2
-!define VERSIONBUILD 190720
+!define VERSIONMINOR 6
+!define VERSIONPATCH 0
+!define VERSIONBUILD 210720
 
 RequestExecutionLevel admin
 InstallDir "$PROGRAMFILES\${APPNAME}"
@@ -62,6 +62,7 @@ Section "SeaShell" SectionCore
     File "Core\ConfigAdapter.Ini.dll"
     File "Core\ConfigAdapter.Xml.dll"
     File "Core\DotNet.Misc.Extensions.dll"
+    File "Core\DotNet.Misc.Collections.dll"
     File "Core\IniFileParserDotNetCore.dll"
     File "Core\Pastel.dll"
     File "Core\SeaShell.Core.dll"
