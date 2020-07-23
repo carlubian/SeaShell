@@ -37,9 +37,10 @@ namespace SeaShell.Otter
                 MutuallyExclusive("Pack", "Unpack", "Install", "List", "Remove", "Create")).Eval(parameters))
             {
                 // Pack
-                if (parameters.TryGetValue("Pack", out var PackValue))
+                if (parameters.Any(p => p.Key.Equals("Pack")))
                 {
                     var dirName = Environment.CurrentDirectory;
+                    parameters.TryGetValue("Pack", out var PackValue);
 
                     if (PackValue != "")
                         dirName = PackValue;
@@ -51,9 +52,10 @@ namespace SeaShell.Otter
                 }
 
                 // Unpack
-                if (parameters.TryGetValue("Unpack", out var UnpackValue))
+                if (parameters.Any(p => p.Key.Equals("Unpack")))
                 {
                     // TODO check for errors (missing file, incorrect format)
+                    parameters.TryGetValue("Unpack", out var UnpackValue);
                     var library = UnpackValue;
                     LibraryManager.Unpack(library);
                     ConsoleIO.WriteInfo($"Unpacked library file {library}");
@@ -61,18 +63,20 @@ namespace SeaShell.Otter
                 }
 
                 // Install
-                if (parameters.TryGetValue("Install", out var InstallValue))
+                if (parameters.Any(p => p.Key.Equals("Install")))
                 {
                     // TODO check for errors (missing file, incorrect format)
+                    parameters.TryGetValue("Install", out var InstallValue);
                     LibraryManager.InstallLibrary(InstallValue);
                     return Enumerable.Empty<dynamic>();
                 }
 
                 // List
-                if (parameters.TryGetValue("List", out var ListValue))
+                if (parameters.Any(p => p.Key.Equals("List")))
                 {
                     var BaseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".SeaShell");
                     var LibDir = Path.Combine(BaseDir, "Libraries");
+                    parameters.TryGetValue("List", out var ListValue);
 
                     // Global commands
                     foreach (var folder in Directory.EnumerateDirectories(LibDir))
@@ -105,8 +109,10 @@ namespace SeaShell.Otter
                 }
 
                 // Remove
-                if (parameters.TryGetValue("Remove", out var RemoveValue))
+                if (parameters.Any(p => p.Key.Equals("Remove")))
                 {
+                    parameters.TryGetValue("Remove", out var RemoveValue);
+
                     if (RemoveValue is "Otter")
                     {
                         ConsoleIO.WriteError("Otter is an internal package and cannot be removed.");
@@ -126,9 +132,10 @@ namespace SeaShell.Otter
                 }
 
                 // Create
-                if (parameters.TryGetValue("Create", out var CreateValue))
+                if (parameters.Any(p => p.Key.Equals("Create")))
                 {
                     var dirName = Environment.CurrentDirectory;
+                    parameters.TryGetValue("Create", out var CreateValue);
 
                     if (CreateValue != "")
                         dirName = CreateValue;
