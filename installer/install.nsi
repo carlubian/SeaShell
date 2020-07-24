@@ -9,8 +9,8 @@
 !define INSTALLSIZE 791
 !define VERSIONMAJOR 0
 !define VERSIONMINOR 6
-!define VERSIONPATCH 0
-!define VERSIONBUILD 210720
+!define VERSIONPATCH 1
+!define VERSIONBUILD 240720
 
 RequestExecutionLevel admin
 InstallDir "$PROGRAMFILES\${APPNAME}"

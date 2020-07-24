@@ -33,10 +33,11 @@ namespace SeaShell.Core.SystemCommands
                 MutuallyExclusive("Load", "Unload", "Create", "Info")).Eval(parameters))
             {
                 // Load
-                if(parameters.TryGetValue("Load", out var LoadValue))
+                if (parameters.Any(p => p.Key.Equals("Load")))
                 {
                     var dirName = Environment.CurrentDirectory;
 
+                    parameters.TryGetValue("Load", out var LoadValue);
                     if (LoadValue != "")
                         dirName = LoadValue;
 
@@ -47,7 +48,7 @@ namespace SeaShell.Core.SystemCommands
                 }
 
                 // Unload
-                if (parameters.TryGetValue("Unload", out var UnloadValue))
+                if (parameters.Any(p => p.Key.Equals("Unload")))
                 {
                     if (SeaShellHost.Env.Equals("_system"))
                     {
@@ -61,10 +62,11 @@ namespace SeaShell.Core.SystemCommands
                 }
 
                 // Create
-                if (parameters.TryGetValue("Create", out var CreateValue))
+                if (parameters.Any(p => p.Key.Equals("Create")))
                 {
                     var dirName = Environment.CurrentDirectory;
 
+                    parameters.TryGetValue("Create", out var CreateValue);
                     if (CreateValue != "")
                         dirName = CreateValue;
 
@@ -78,7 +80,7 @@ namespace SeaShell.Core.SystemCommands
                 }
 
                 // Info
-                if (parameters.TryGetValue("Info", out var InfoValue))
+                if (parameters.Any(p => p.Key.Equals("Info")))
                 {
                     if (SeaShellHost.Env.Equals("_system"))
                     {
