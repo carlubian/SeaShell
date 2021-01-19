@@ -7,4 +7,5 @@ MareNostrum.TimeTracker
 installer/Core
 installer/Libraries
 installer/Otter
+installer/DL
 installer/*.exe

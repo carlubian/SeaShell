@@ -14,7 +14,7 @@ namespace SeaShell.Core
 {
     public static class SeaShellHost
     {
-        internal static readonly string Version = "0.6.1.240720";
+        internal static readonly string Version = "1.0.2021.01";
         internal static bool Continue = true;
         internal static string Env = "_system";
         internal static string EnvPath = "";
