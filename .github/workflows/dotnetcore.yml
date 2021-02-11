@@ -16,7 +16,7 @@ jobs:
     - name: Setup .NET 5
       uses: actions/setup-dotnet@v1.7.2
       with:
-        dotnet-version: 5.0
+        dotnet-version: '5.0.103'
     - name: Build SeaShell.Core
       run: dotnet build SeaShell.Core/SeaShell.Core.csproj --configuration Release
     - name: Build SeaShell.IO
