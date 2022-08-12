@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ConfigAdapter.Ini" Version="3.2.0" />
+    <PackageReference Include="ConfigAdapter.Ini" Version="4.0.0" />
     <PackageReference Include="ConfigAdapter.Xml" Version="4.0.0" />
     <PackageReference Include="DotNet.Misc.Collections" Version="1.2.1" />
     <PackageReference Include="Pastel" Version="3.0.1" />
