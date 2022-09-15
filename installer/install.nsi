@@ -167,32 +167,6 @@ Section "Libraries" SectionLibraries
 
 SectionEnd
 
-# DL section ---------------------------------------------------------------------------------------------------
-Function InstallDLOnProfile 
-    ## Get the profile path from the stack
-        Pop $0
- 
-    # Install common libraries for current user profile
-        SetOutPath "$0\.SeaShell\Libraries\DeepLearning"
-        File "DL\Manifest.ini"
-        SetOutPath "$0\.SeaShell\Libraries\DeepLearning\Assemblies"
-        File "DL\DatasetAnnotationConverter.dll"
- 
-    ## Continue Enumeration
-        Push ""
-        Return
- 
-    ## Stop Enumeration
-        Push "~" # Any value other than an empty string will abort the enumeration
-FunctionEnd
-
-Section "Deep Learning" SectionDL
-
-    !define NTProfilePaths::IgnoreSystem
-    ${EnumProfilePaths} InstallDLOnProfile
-
-SectionEnd
-
 # Unistall ------------------------------------------------------------------------------------------------------------
 Section "Uninstall" SectionUninstall
 
@@ -231,8 +205,6 @@ LangString DESC_SectionOtter ${LANG_ENGLISH} "Otter is the package manager for S
 LangString DESC_SectionOtter ${LANG_SPANISH} "Otter es el administrador de paquetes de SeaShell. Es necesario para gestionar paquetes adicionales de SeaShell."
 LangString DESC_SectionLibraries ${LANG_ENGLISH} "Common libraries like SeaShell.IO, SeaShell.Net or SeaShell.Reflection."
 LangString DESC_SectionLibraries ${LANG_SPANISH} "Paquetes comunes como SeaShell.IO, SeaShell.Net o SeaShell.Reflection."
-LangString DESC_SectionDL ${LANG_ENGLISH} "Specific libraries to deal with Deep Learning datasets."
-LangString DESC_SectionDL ${LANG_SPANISH} "Paquetes especializados para tratar con datasets de Deep Learning."
 LangString DESC_SectionUninstall ${LANG_ENGLISH} "Uninstall the core SeaShell interpreter."
 LangString DESC_SectionUninstall ${LANG_SPANISH} "Desinstalar el ejecutable principal de SeaShell."
 
@@ -240,6 +212,5 @@ LangString DESC_SectionUninstall ${LANG_SPANISH} "Desinstalar el ejecutable prin
     !insertmacro MUI_DESCRIPTION_TEXT ${SectionCore} $(DESC_SectionCore)
     !insertmacro MUI_DESCRIPTION_TEXT ${SectionOtter} $(DESC_SectionOtter)
     !insertmacro MUI_DESCRIPTION_TEXT ${SectionLibraries} $(DESC_SectionLibraries)
-    !insertmacro MUI_DESCRIPTION_TEXT ${SectionDL} $(DESC_SectionDL)
     !insertmacro MUI_DESCRIPTION_TEXT ${SectionUninstall} $(DESC_SectionUninstall)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END

@@ -1,7 +1,6 @@
 ﻿using SeaShell.Core.Extensibility;
 using SeaShell.Core.Model;
 using static SeaShell.Core.Extensibility.Parameters.ParameterCheckBuilder;
-using System;
 using System.Collections.Generic;
 using System.Net;
 using SeaShell.Core.Extensibility.DuckTyping;

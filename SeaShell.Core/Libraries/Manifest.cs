@@ -1,9 +1,7 @@
-﻿using ConfigAdapter.Ini;
+﻿using ConfigAdapter;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace SeaShell.Core.Libraries
 {
@@ -27,30 +25,30 @@ namespace SeaShell.Core.Libraries
             if (!File.Exists(file))
                 return null;
 
-            var config = IniConfig.From(file);
+            var config = Configuration.From(file);
 
             return new Manifest
             {
-                ManifestVersion = config.Read("SeaShell:Manifest Version"),
-                HostVersion = config.Read("SeaShell:Host Version"),
-                RuntimeVersion = config.Read("SeaShell:Runtime Version"),
-                Name = config.Read("Library:Name"),
-                LibraryVersion = config.Read("Library:Version"),
-                Author = config.Read("Library:Author"),
-                URI = config.Read("Library:URI"),
-                Description = config.Read("Library:Description"),
-                Assemblies = config.Read("Library:Assemblies").Split(',').Select(a => a.Trim()).ToArray()
+                ManifestVersion = config.GetValue("SeaShell:Manifest Version") ?? string.Empty,
+                HostVersion = config.GetValue("SeaShell:Host Version") ?? string.Empty,
+                RuntimeVersion = config.GetValue("SeaShell:Runtime Version") ?? string.Empty,
+                Name = config.GetValue("Library:Name") ?? string.Empty,
+                LibraryVersion = config.GetValue("Library:Version") ?? string.Empty,
+                Author = config.GetValue("Library:Author") ?? string.Empty,
+                URI = config.GetValue("Library:URI") ?? string.Empty,
+                Description = config.GetValue("Library:Description") ?? string.Empty,
+                Assemblies = config.GetValue("Library:Assemblies")?.Split(',')?.Select(a => a.Trim())?.ToArray() ?? Array.Empty<string>()
             };
         }
 
         internal static void WriteTemplateManifest(string file)
         {
-            using (var writer = new StreamWriter(file))
-                foreach (var line in new string[] {
+            using var writer = new StreamWriter(file);
+            foreach (var line in new string[] {
                     "[SeaShell]",
                     "Manifest Version = 1",
                     "Host Version = 0.2 - 1.0",
-                    "Runtime Version = 3.1",
+                    "Runtime Version = 5.0",
                     "",
                     "[Library]",
                     "Name = Replace.With.Library.Name",
@@ -60,7 +58,7 @@ namespace SeaShell.Core.Libraries
                     "Description = Description of your library here.",
                     "Assemblies = YourAssembly.dll"
                 })
-                    writer.WriteLine(line);
+                writer.WriteLine(line);
         }
     }
 }

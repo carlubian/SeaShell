@@ -1,7 +1,4 @@
-﻿using DotNet.Misc.Extensions.Linq;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace SeaShell.Core.Model
 {
@@ -14,6 +11,6 @@ namespace SeaShell.Core.Model
             Commands = commands;
         }
 
-        public override string ToString() => Commands.Stringify(c => c.ToString(), " > ");
+        public override string ToString() => string.Join(" > ", Commands);
     }
 }

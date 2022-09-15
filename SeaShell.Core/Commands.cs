@@ -1,11 +1,9 @@
-﻿using ConfigAdapter.Xml;
-using SeaShell.Core.Extensibility;
+﻿using SeaShell.Core.Extensibility;
 using SeaShell.Core.Libraries;
 using SeaShell.Core.SystemCommands;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace SeaShell.Core
 {

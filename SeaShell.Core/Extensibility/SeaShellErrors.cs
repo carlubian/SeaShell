@@ -1,8 +1,4 @@
-﻿using DotNet.Misc.Extensions.Linq;
-using SeaShell.Core.Extensibility.Parameters;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using SeaShell.Core.Extensibility.Parameters;
 
 namespace SeaShell.Core.Extensibility
 {
@@ -57,12 +53,12 @@ namespace SeaShell.Core.Extensibility
 
         public static void NotifyMissingOneOfParams(params string[] oneOf)
         {
-            ConsoleIO.WriteError($"One of the following parameters must be present: {oneOf.Stringify(p => p, ", ")}.");
+            ConsoleIO.WriteError($"One of the following parameters must be present: {string.Join(',', oneOf)}.");
         }
 
         public static void NotifyMutuallyExclusive(params string[] onlyOne)
         {
-            ConsoleIO.WriteError($"Only one of the following parameters can appear: {onlyOne.Stringify(p => p, ", ")}.");
+            ConsoleIO.WriteError($"Only one of the following parameters can appear: {string.Join(',', onlyOne)}.");
         }
 
         public static void NotifyInvalidPath(string path)

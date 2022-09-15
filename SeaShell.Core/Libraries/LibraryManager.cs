@@ -26,7 +26,7 @@ namespace SeaShell.Core.Libraries
             Commands.CommandsPerLibrary.Add(libName, new List<string>());
             foreach (var cmd in lib.GetTypes().Where(t => typeof(ISeaShellCommand).IsAssignableFrom(t)))
             {
-                if (!(Activator.CreateInstance(cmd) is ISeaShellCommand command))
+                if (Activator.CreateInstance(cmd) is not ISeaShellCommand command)
                     continue;
 
                 Commands.AllCommands.Add(command.Name, command);
@@ -93,7 +93,7 @@ namespace SeaShell.Core.Libraries
             Commands.LocalCommandsPerLibrary.Add(libName, new List<string>());
             foreach (var cmd in lib.GetTypes().Where(t => typeof(ISeaShellCommand).IsAssignableFrom(t)))
             {
-                if (!(Activator.CreateInstance(cmd) is ISeaShellCommand command))
+                if (Activator.CreateInstance(cmd) is not ISeaShellCommand command)
                     continue;
 
                 Commands.LocalCommands.Add(command.Name, command);

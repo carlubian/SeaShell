@@ -1,9 +1,5 @@
-﻿using ConfigAdapter.Ini;
-using System;
-using System.Collections.Generic;
+﻿using ConfigAdapter;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace SeaShell.Core.Libraries
 {
@@ -19,24 +15,24 @@ namespace SeaShell.Core.Libraries
             if (!File.Exists(file))
                 return null;
 
-            var config = IniConfig.From(file);
+            var config = Configuration.From(file);
 
             return new VirtualEnv
             {
-                Name = config.Read("Environment:Name"),
-                Description = config.Read("Environment:Description")
+                Name = config.GetValue("Environment:Name") ?? string.Empty,
+                Description = config.GetValue("Environment:Description") ?? string.Empty
             };
         }
 
         internal static void WriteTemplateEnvironment(string file)
         {
-            using (var writer = new StreamWriter(file))
-                foreach (var line in new string[] {
+            using var writer = new StreamWriter(file);
+            foreach (var line in new string[] {
                     "[Environment]",
                     "Name = VirtualEnv",
                     "Description = Description of your virtual environment here."
                 })
-                    writer.WriteLine(line);
+                writer.WriteLine(line);
         }
     }
 }

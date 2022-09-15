@@ -1,7 +1,5 @@
 ﻿using Pastel;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SeaShell.Core
 {

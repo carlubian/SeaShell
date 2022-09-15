@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29911.84
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32819.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeaShell.Core", "SeaShell.Core\SeaShell.Core.csproj", "{16D0EC9C-E886-42CB-AC86-5258DC107B44}"
 EndProject
@@ -11,13 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeaShell", "SeaShell\SeaShe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeaShell.IO", "SeaShell.IO\SeaShell.IO.csproj", "{61D21A65-6DF2-45EC-BF43-3050187A4E15}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MareNostrum.TimeTracker", "MareNostrum.TimeTracker\MareNostrum.TimeTracker.csproj", "{0FF8A2F7-26CF-46D2-9BF3-F115CA6D9058}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeaShell.Net", "SeaShell.Net\SeaShell.Net.csproj", "{3987306F-5E1F-40AB-BC1C-049665D1B1DE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeaShell.Reflection", "SeaShell.Reflection\SeaShell.Reflection.csproj", "{DC167F6D-4AA3-42F3-8D5F-69A763194D45}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeaShell.Otter", "SeaShell.Otter\SeaShell.Otter.csproj", "{5F5684B2-2DBE-4E18-8B0B-AB945C168ED9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeaShell.Otter", "SeaShell.Otter\SeaShell.Otter.csproj", "{5F5684B2-2DBE-4E18-8B0B-AB945C168ED9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +39,6 @@ Global
 		{61D21A65-6DF2-45EC-BF43-3050187A4E15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61D21A65-6DF2-45EC-BF43-3050187A4E15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61D21A65-6DF2-45EC-BF43-3050187A4E15}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0FF8A2F7-26CF-46D2-9BF3-F115CA6D9058}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0FF8A2F7-26CF-46D2-9BF3-F115CA6D9058}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0FF8A2F7-26CF-46D2-9BF3-F115CA6D9058}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0FF8A2F7-26CF-46D2-9BF3-F115CA6D9058}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3987306F-5E1F-40AB-BC1C-049665D1B1DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3987306F-5E1F-40AB-BC1C-049665D1B1DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3987306F-5E1F-40AB-BC1C-049665D1B1DE}.Release|Any CPU.ActiveCfg = Release|Any CPU

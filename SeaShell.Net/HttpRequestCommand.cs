@@ -1,14 +1,11 @@
 ﻿using SeaShell.Core.Extensibility;
 using SeaShell.Core.Model;
 using static SeaShell.Core.Extensibility.Parameters.ParameterCheckBuilder;
-using System;
 using System.Collections.Generic;
 using SeaShell.Core.Extensibility.DuckTyping;
-using System.IO;
 using DotNet.Misc.Extensions.Linq;
 using System.Linq;
 using System.Net.Http;
-using Sprache;
 
 namespace SeaShell.Net
 {

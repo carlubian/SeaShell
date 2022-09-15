@@ -1,8 +1,5 @@
-﻿using DotNet.Misc.Extensions.Linq;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace SeaShell.Core.Model
 {
@@ -26,6 +23,6 @@ namespace SeaShell.Core.Model
             PipelineParameter = Enumerable.Empty<dynamic>();
         }
 
-        public override string ToString() => $"{Name} {Parameters.Stringify(p => p.ToString(), " ")}";
+        public override string ToString() => $"{Name} {string.Join(' ', Parameters)}";
     }
 }

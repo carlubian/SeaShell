@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SeaShell.Core.Model
+﻿namespace SeaShell.Core.Model
 {
     public class Parameter
     {

@@ -2,7 +2,6 @@
 using SeaShell.Core.Model;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace SeaShell.Core.SystemCommands
 {

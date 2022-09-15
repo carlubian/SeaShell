@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace SeaShell.Core.Model
+﻿namespace SeaShell.Core.Model
 {
     public class Ident
     {
@@ -24,6 +20,6 @@ namespace SeaShell.Core.Model
 
         public static implicit operator string(Ident source) => source.Content;
 
-        public static implicit operator Ident(string source) => new Ident(source);
+        public static implicit operator Ident(string source) => new(source);
     }
 }

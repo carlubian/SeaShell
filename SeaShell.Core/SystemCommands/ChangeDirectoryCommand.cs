@@ -1,11 +1,9 @@
-﻿using DotNet.Misc.Extensions.Linq;
-using SeaShell.Core.Extensibility;
+﻿using SeaShell.Core.Extensibility;
 using SeaShell.Core.Extensibility.DuckTyping;
 using SeaShell.Core.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using static SeaShell.Core.Extensibility.Parameters.ParameterCheckBuilder;
 
 namespace SeaShell.Core.SystemCommands
@@ -47,10 +45,10 @@ namespace SeaShell.Core.SystemCommands
                 }
             }
 
-            return new ChangeDirectoryPipelineObject
+            yield return new ChangeDirectoryPipelineObject
             {
                 URI = Environment.CurrentDirectory
-            }.Enumerate();
+            };
         }
     }
 

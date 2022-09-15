@@ -1,9 +1,7 @@
 ﻿using SeaShell.Core.Extensibility;
 using SeaShell.Core.Model;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace SeaShell.Core.SystemCommands
 {
@@ -25,7 +23,7 @@ namespace SeaShell.Core.SystemCommands
                 ConsoleIO.WriteWarning("The Exit command should not be part of a pipeline.");
 
             SeaShellHost.Continue = false;
-            return null;
+            return Enumerable.Empty<dynamic>();
         }
     }
 }

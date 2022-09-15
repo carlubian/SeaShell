@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace SeaShell.IO
 {
@@ -57,7 +56,7 @@ namespace SeaShell.IO
                 if (pipeline is null)
                 {
                     ConsoleIO.WriteError("File-Info command called outside a pipeline, or previous command returned empty object.");
-                    return null;
+                    return Enumerable.Empty<dynamic>();
                 }
 
                 foreach (var obj in pipeline)

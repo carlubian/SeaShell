@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-[assembly:InternalsVisibleTo("SeaShell.Test")]
+[assembly: InternalsVisibleTo("SeaShell.Test")]
 [assembly: InternalsVisibleTo("SeaShell.Otter")]
 [assembly: InternalsVisibleTo("SeaShell.Reflection")]
 namespace SeaShell.Core

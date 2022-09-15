@@ -2,11 +2,9 @@
 using SeaShell.Core.Extensibility.DuckTyping;
 using static SeaShell.Core.Extensibility.Parameters.ParameterCheckBuilder;
 using SeaShell.Core.Model;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace SeaShell.IO
 {
